@@ -4218,3 +4218,71 @@ body {
     0%, 100% { box-shadow: 0 4px 20px hsla(190, 90%, 50%, 0.25); }
     50%       { box-shadow: 0 4px 32px hsla(190, 90%, 50%, 0.5), 0 0 0 4px hsla(190, 90%, 50%, 0.08); }
 }
+
+/* ======================================
+   Champions / Hall of Fame Leaderboard
+====================================== */
+.champions-ranking-section {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.champions-card {
+    background: var(--surface-2);
+    border: 1.5px solid hsla(45, 85%, 50%, 0.25);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 12px 40px hsla(0, 0%, 0%, 0.3),
+                0 0 20px hsla(45, 80%, 40%, 0.06);
+}
+
+.champions-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background: hsla(45, 85%, 50%, 0.03);
+}
+
+.champions-card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.champions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.champions-table th {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    background: hsla(0, 0%, 100%, 0.015);
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.champions-table td {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid hsla(0, 0%, 100%, 0.04);
+}
+
+.champions-table tr:last-child td {
+    border-bottom: none;
+}
+
+.champions-table tr.my-row td {
+    color: var(--accent-yellow);
+    background: hsla(45, 90%, 50%, 0.05);
+}
+

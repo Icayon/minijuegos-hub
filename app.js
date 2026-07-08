@@ -653,10 +653,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadFullLeaderboard() {
         const grid = document.getElementById('lb-full-grid');
+        const champTable = document.getElementById('champions-table');
+        const champTbody = document.getElementById('champions-tbody');
+        const champLoading = document.getElementById('champions-loading');
         if (!grid) return;
         const playerName = state.player.name;
 
-        // Build skeleton cards
+        // Build skeleton cards for category grids
         grid.innerHTML = LB_CATEGORIES.map(cat => `
             <div class="lb-card" id="lbcard-${cat.key}">
                 <div class="lb-card-header">
@@ -670,20 +673,37 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
 
-        // Fetch each category
-        LB_CATEGORIES.forEach(cat => {
+        if (champLoading) {
+            champLoading.style.display = 'block';
+            champLoading.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Calculando puntos...';
+        }
+        if (champTable) champTable.classList.add('hidden');
+
+        const top1Points = {}; // name -> count of Top 1s
+
+        // Fetch each category in parallel
+        const promises = LB_CATEGORIES.map(cat => {
             const card = document.getElementById(`lbcard-${cat.key}`);
-            fetch(`${FIREBASE_URL}/leaderboard/${cat.key}.json`)
+            return fetch(`${FIREBASE_URL}/leaderboard/${cat.key}.json`)
                 .then(r => r.ok ? r.json() : null)
                 .then(data => {
                     let entries = [];
                     if (data && typeof data === 'object') {
                         entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 10);
                     }
+
+                    // Process Top 1 point
+                    if (entries.length > 0) {
+                        const topPlayer = entries[0].name;
+                        top1Points[topPlayer] = (top1Points[topPlayer] || 0) + 1;
+                    }
+
                     const medals = ['🥇','🥈','🥉'];
                     if (entries.length === 0) {
-                        card.innerHTML = card.innerHTML.replace(/<div class="lb-card-loading">.*?<\/div>/s,
-                            '<div class="lb-card-loading" style="font-style:italic">¡Sé el primero!</div>');
+                        if (card) {
+                            card.innerHTML = card.innerHTML.replace(/<div class="lb-card-loading">.*?<\/div>/s,
+                                '<div class="lb-card-loading" style="font-style:italic">¡Sé el primero!</div>');
+                        }
                         return;
                     }
                     const rows = entries.map((e,i) => {
@@ -692,12 +712,49 @@ document.addEventListener('DOMContentLoaded', () => {
                         const mine = e.name === playerName ? 'my-row' : '';
                         return `<tr class="${mine}"><td>${pos}</td><td>${e.name}</td><td>${sc}</td></tr>`;
                     }).join('');
-                    card.querySelector('.lb-card-loading').outerHTML = `<table class="lb-card-table"><tbody>${rows}</tbody></table>`;
+                    if (card) {
+                        card.querySelector('.lb-card-loading').outerHTML = `<table class="lb-card-table"><tbody>${rows}</tbody></table>`;
+                    }
                 })
                 .catch(() => {
-                    card.querySelector('.lb-card-loading').textContent = 'Error de conexión';
+                    if (card) {
+                        card.querySelector('.lb-card-loading').textContent = 'Error de conexión';
+                    }
                 });
         });
+
+        // Wait for all fetches to complete to compute the Hall of Fame
+        Promise.all(promises)
+            .then(() => {
+                if (champLoading) champLoading.style.display = 'none';
+                if (!champTbody || !champTable) return;
+
+                // Sort players by total points
+                const sortedPlayers = Object.entries(top1Points)
+                    .map(([name, pts]) => ({ name, points: pts }))
+                    .sort((a,b) => b.points - a.points);
+
+                if (sortedPlayers.length === 0) {
+                    champTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem">Aún no hay récords para calcular puntos.</td></tr>';
+                } else {
+                    const medals = ['🥇','🥈','🥉'];
+                    champTbody.innerHTML = sortedPlayers.map((p, i) => {
+                        const pos = i < 3 ? medals[i] : `#${i+1}`;
+                        const ptsStr = p.points === 1 ? '1 punto' : `${p.points} puntos`;
+                        const mine = p.name === playerName ? 'my-row' : '';
+                        return `<tr class="${mine}">
+                            <td style="font-weight:700;">${pos}</td>
+                            <td style="font-weight:600;">${p.name}</td>
+                            <td style="text-align:right;font-weight:700;color:var(--accent-yellow);">${ptsStr}</td>
+                        </tr>`;
+                    }).join('');
+                }
+                champTable.classList.remove('hidden');
+            })
+            .catch(err => {
+                console.warn('Error computing Hall of Fame', err);
+                if (champLoading) champLoading.innerHTML = 'Error al calcular Hall of Fame.';
+            });
     }
 
     // ── Home Leaderboard Widget ───────────────────────────────────────────────

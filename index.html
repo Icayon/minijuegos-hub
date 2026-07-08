@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=1.0.8">
+    <link rel="stylesheet" href="style.css?v=1.0.9">
 </head>
 <body>
     <!-- Background Glows -->
@@ -204,9 +204,40 @@
         <!-- ═══════════════ LEADERBOARD VIEW ═══════════════ -->
         <div id="leaderboard-view" class="view">
             <div class="view-header-bar">
-                <h1 class="view-title"><i class="fa-solid fa-trophy" style="color:var(--accent-yellow)"></i> Leaderboard Global</h1>
-                <p class="view-subtitle">Top 10 mundial por categoría · Tiempo real via Firebase</p>
+                <h1 class="view-title"><i class="fa-solid fa-crown" style="color:var(--accent-yellow)"></i> Hall of Fame</h1>
+                <p class="view-subtitle">Ranking global de campeones: Cada Top 1 global en cualquier categoría suma 1 punto.</p>
             </div>
+
+            <!-- Champions / Global Points Ranking -->
+            <div class="champions-ranking-section">
+                <div class="champions-card">
+                    <div class="champions-card-header">
+                        <i class="fa-solid fa-medal" style="color: var(--accent-yellow); font-size: 1.4rem;"></i>
+                        <h3>Ranking de Puntos</h3>
+                    </div>
+                    <div id="champions-loading" class="lb-status">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Calculando puntos...
+                    </div>
+                    <table class="champions-table hidden" id="champions-table">
+                        <thead>
+                            <tr>
+                                <th>Posición</th>
+                                <th>Jugador</th>
+                                <th style="text-align: right;">Top 1s (Puntos)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="champions-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="view-header-bar" style="margin-top: 3rem;">
+                <h2 class="view-title" style="font-size: 1.4rem;"><i class="fa-solid fa-list-ol"></i> Récords por Categoría</h2>
+                <p class="view-subtitle">Top 10 de cada modo y dificultad</p>
+            </div>
+
             <div class="lb-full-grid" id="lb-full-grid">
                 <!-- Cards populated by JS -->
             </div>
@@ -613,6 +644,6 @@
     </div>
 
     <!-- Main JavaScript -->
-    <script src="app.js?v=1.0.8"></script>
+    <script src="app.js?v=1.0.9"></script>
 </body>
 </html>
