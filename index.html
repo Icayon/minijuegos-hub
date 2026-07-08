@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minijuegos Arcade - Practica y Diviértete</title>
-    <meta name="description" content="Una colección de minijuegos web responsivos y rápidos para entrenar tus reflejos, memoria y lógica de forma interactiva y moderna.">
-    <!-- Google Fonts -->
+    <title>ArcadeHub — Minijuegos de Habilidad</title>
+    <meta name="description" content="Pon a prueba tus reflejos, lógica y velocidad con los minijuegos de ArcadeHub. Compite en el ranking global en tiempo real.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style.css?v=1.0.7">
+    <link rel="stylesheet" href="style.css?v=1.0.8">
 </head>
 <body>
     <!-- Background Glows -->
@@ -22,277 +19,201 @@
     <!-- Toast Notification -->
     <div id="toast-notification" class="toast" role="alert" aria-live="polite"></div>
 
-    <div class="app-container">
-        <!-- Sidebar / Dashboard Panel -->
-        <aside class="sidebar-panel">
-            <div class="brand">
-                <i class="fa-solid fa-gamepad brand-icon"></i>
-                <h2 class="brand-title">ArcadeHub</h2>
-            </div>
+    <!-- Navbar -->
+    <nav class="navbar" id="main-navbar">
+        <div class="nav-brand">
+            <i class="fa-solid fa-gamepad nav-brand-icon"></i>
+            <span class="nav-brand-title">ArcadeHub</span>
+        </div>
+        <div class="nav-links">
+            <button class="nav-btn active" id="nav-home-btn">
+                <i class="fa-solid fa-house"></i> Home
+            </button>
+            <button class="nav-btn" id="nav-games-btn">
+                <i class="fa-solid fa-gamepad"></i> Juegos
+            </button>
+            <button class="nav-btn" id="nav-leaderboard-btn">
+                <i class="fa-solid fa-trophy"></i> Leaderboard
+            </button>
+        </div>
+        <div class="nav-player">
+            <div class="nav-avatar"><i class="fa-solid fa-user-ninja"></i></div>
+            <span id="nav-player-name" class="nav-player-name">Jugador 1</span>
+            <button id="nav-edit-name-btn" class="edit-btn" aria-label="Editar nombre"><i class="fa-solid fa-pen"></i></button>
+        </div>
+    </nav>
 
-            <!-- Player Profile Card -->
-            <div class="profile-card">
-                <div class="avatar-container">
-                    <div class="avatar">
-                        <i class="fa-solid fa-user-ninja"></i>
+    <!-- App Wrapper -->
+    <div class="app-wrapper">
+
+        <!-- ═══════════════ HOME VIEW ═══════════════ -->
+        <div id="home-view" class="view active-view">
+            <div class="home-layout">
+
+                <!-- Left: Hero + Game Cards -->
+                <div class="home-main">
+                    <div class="hero-section">
+                        <h1 class="hero-title">
+                            <span class="hero-title-main">Arcade</span><span class="hero-title-accent">Hub</span>
+                        </h1>
+                        <p class="hero-subtitle">Pon a prueba tus reflejos, lógica y velocidad</p>
+                        <button class="hero-cta-btn" id="hero-play-btn">
+                            <i class="fa-solid fa-play"></i>&nbsp; Jugar Ahora
+                        </button>
+                    </div>
+
+                    <div class="home-games-section">
+                        <h2 class="section-heading"><i class="fa-solid fa-gamepad"></i> Juegos</h2>
+                        <div class="home-games-grid">
+                            <div class="home-game-card" data-game="reaction">
+                                <div class="home-card-glow" style="--glow:var(--accent-yellow)"></div>
+                                <i class="fa-solid fa-bolt home-card-icon" style="color:var(--accent-yellow)"></i>
+                                <div class="home-card-info">
+                                    <span class="home-card-title">Reflejos Rápidos</span>
+                                    <span class="home-card-desc">Reacciona al verde</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right home-card-arrow"></i>
+                            </div>
+                            <div class="home-game-card" data-game="untangle">
+                                <div class="home-card-glow" style="--glow:var(--accent-purple)"></div>
+                                <i class="fa-solid fa-circle-nodes home-card-icon" style="color:var(--accent-purple)"></i>
+                                <div class="home-card-info">
+                                    <span class="home-card-title">Desenredar Nodos</span>
+                                    <span class="home-card-desc">Elimina todos los cruces</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right home-card-arrow"></i>
+                            </div>
+                            <div class="home-game-card" data-game="printlock">
+                                <div class="home-card-glow" style="--glow:var(--accent-green)"></div>
+                                <i class="fa-solid fa-fingerprint home-card-icon" style="color:var(--accent-green)"></i>
+                                <div class="home-card-info">
+                                    <span class="home-card-title">Pirateo de Huella</span>
+                                    <span class="home-card-desc">Descifra la huella dactilar</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right home-card-arrow"></i>
+                            </div>
+                            <div class="home-game-card" data-game="pathfind">
+                                <div class="home-card-glow" style="--glow:var(--accent-cyan)"></div>
+                                <i class="fa-solid fa-route home-card-icon" style="color:var(--accent-cyan)"></i>
+                                <div class="home-card-info">
+                                    <span class="home-card-title">Conector de Puntos</span>
+                                    <span class="home-card-desc">Conecta en orden de distancia</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right home-card-arrow"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="profile-info">
-                    <div class="profile-name-row">
-                        <span id="player-name" class="player-name">Jugador 1</span>
-                        <button id="edit-name-btn" class="edit-btn" aria-label="Editar nombre del jugador"><i class="fa-solid fa-pen"></i></button>
-                    </div>
-                    <span class="player-title">Entrenador Novato</span>
-                </div>
-            </div>
 
-        <!-- Global Stats -->
-            <div class="stats-section">
-                <div class="stats-tabs">
-                    <button class="stats-tab-btn active" id="tab-my-records-btn">Mis Récords</button>
-                    <button class="stats-tab-btn" id="tab-global-records-btn">Global (Live)</button>
-                </div>
-                
-                <!-- Personal records panel -->
-                <div id="panel-my-records" class="stats-panel-content">
-                    <!-- Total games -->
-                    <div class="stat-total-row">
-                        <i class="fa-solid fa-gamepad"></i>
-                        <span class="stat-total-label">Partidas jugadas</span>
-                        <span id="stat-total-games" class="stat-total-val">0</span>
-                    </div>
-
-                    <!-- Reflejos -->
-                    <div class="stat-group">
-                        <div class="stat-group-header">
-                            <i class="fa-solid fa-bolt" style="color: var(--accent-cyan)"></i>
-                            <span>Reflejos Rápidos</span>
+                <!-- Right: Live Leaderboard Widget -->
+                <aside class="home-sidebar">
+                    <div class="home-lb-widget">
+                        <div class="home-lb-header">
+                            <i class="fa-solid fa-trophy" style="color:var(--accent-yellow)"></i>
+                            <span>Leaderboard Global</span>
                         </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Récord</span>
-                            <span id="stat-best-reaction" class="stat-value">-- ms</span>
-                        </div>
-                    </div>
-
-                    <!-- Desenredar -->
-                    <div class="stat-group">
-                        <div class="stat-group-header">
-                            <i class="fa-solid fa-circle-nodes" style="color: var(--accent-purple)"></i>
-                            <span>Desenredar Nodos</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Fácil</span>
-                            <span id="stat-best-untangle-facil" class="stat-value">-- s</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Medio</span>
-                            <span id="stat-best-untangle-medio" class="stat-value">-- s</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Realista</span>
-                            <span id="stat-best-untangle-realista" class="stat-value">-- s</span>
-                        </div>
-                    </div>
-
-                    <!-- PrintLock -->
-                    <div class="stat-group">
-                        <div class="stat-group-header">
-                            <i class="fa-solid fa-fingerprint" style="color: var(--accent-green)"></i>
-                            <span>Pirateo de Huella</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Fácil</span>
-                            <span id="stat-best-printlock-facil" class="stat-value">-- s</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Medio</span>
-                            <span id="stat-best-printlock-medio" class="stat-value">-- s</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Realista</span>
-                            <span id="stat-best-printlock-realista" class="stat-value">-- s</span>
-                        </div>
-                    </div>
-
-                    <!-- PathFind -->
-                    <div class="stat-group">
-                        <div class="stat-group-header">
-                            <i class="fa-solid fa-route" style="color: var(--accent-yellow)"></i>
-                            <span>Conector de Puntos</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Fácil</span>
-                            <span id="stat-best-pathfind-facil" class="stat-value">-- s</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Medio</span>
-                            <span id="stat-best-pathfind-medio" class="stat-value">-- s</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Realista</span>
-                            <span id="stat-best-pathfind-realista" class="stat-value">-- s</span>
-                        </div>
-                    </div>
-
-                    <button id="reset-stats-btn" class="secondary-btn btn-full">
-                        <i class="fa-solid fa-rotate-left"></i> Reiniciar Datos
-                    </button>
-                </div>
-                
-                <!-- Global records panel -->
-                <div id="panel-global-records" class="stats-panel-content hidden">
-                    <div class="leaderboard-selector-row">
-                        <select id="leaderboard-game-selector" class="leaderboard-select">
-                            <option value="reaction">Reflejos Rápidos</option>
-                            <option value="untangle_facil">Desenredar: Fácil</option>
-                            <option value="untangle_medio">Desenredar: Medio</option>
-                            <option value="untangle_realista">Desenredar: Realista</option>
-                            <option value="printlock_facil">PrintLock: Fácil</option>
-                            <option value="printlock_medio">PrintLock: Medio</option>
-                            <option value="printlock_realista">PrintLock: Realista</option>
-                            <option value="pathfind_facil">PathFind: Fácil</option>
-                            <option value="pathfind_medio">PathFind: Medio</option>
-                            <option value="pathfind_realista">PathFind: Realista</option>
+                        <select id="home-lb-selector" class="home-lb-select">
+                            <option value="reaction">⚡ Reflejos Rápidos</option>
+                            <option value="untangle_facil">🟣 Desenredar — Fácil</option>
+                            <option value="untangle_medio">🟣 Desenredar — Medio</option>
+                            <option value="untangle_realista">🟣 Desenredar — Realista</option>
+                            <option value="printlock_facil">🟢 Pirateo — Fácil</option>
+                            <option value="printlock_medio">🟢 Pirateo — Medio</option>
+                            <option value="printlock_realista">🟢 Pirateo — Realista</option>
+                            <option value="pathfind_facil">🟡 Conector — Fácil</option>
+                            <option value="pathfind_medio">🟡 Conector — Medio</option>
+                            <option value="pathfind_realista">🟡 Conector — Realista</option>
                         </select>
-                    </div>
-                    <div class="global-records-list-wrapper">
-                        <table class="leaderboard-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Jugador</th>
-                                    <th>Tiempo</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboard-table-body">
-                                <!-- Rendered dynamically -->
-                            </tbody>
-                        </table>
-                        <div id="leaderboard-loading-msg" class="leaderboard-status-msg hidden">
-                            <i class="fa-solid fa-spinner fa-spin"></i> Cargando marcas...
+                        <div class="home-lb-body">
+                            <div id="home-lb-loading" class="lb-status"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</div>
+                            <table class="home-lb-table"><tbody id="home-lb-tbody"></tbody></table>
                         </div>
-                        <div id="leaderboard-error-msg" class="leaderboard-status-msg hidden">
-                            <i class="fa-solid fa-triangle-exclamation text-yellow"></i> Error de conexión con Firebase
+                        <div class="home-lb-footer"><i class="fa-solid fa-circle-dot" style="color:var(--accent-green);font-size:0.6rem"></i> Actualización cada 10s</div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════ GAMES VIEW ═══════════════ -->
+        <div id="games-view" class="view">
+            <div class="view-header-bar">
+                <h1 class="view-title"><i class="fa-solid fa-gamepad"></i> Juegos</h1>
+                <p class="view-subtitle">Selecciona un juego y bate tu récord</p>
+            </div>
+            <div class="games-page-grid">
+                <div class="game-page-card" data-game="reaction">
+                    <div class="gpc-top" style="--g:var(--accent-yellow)">
+                        <i class="fa-solid fa-bolt gpc-icon"></i>
+                    </div>
+                    <div class="gpc-body">
+                        <h3>Reflejos Rápidos</h3>
+                        <p>Reacciona al color verde lo antes posible. Mide tu tiempo de reacción en milisegundos.</p>
+                        <div class="gpc-tags">
+                            <span class="gpc-tag">Reacción</span>
+                            <span class="gpc-tag">1 modo</span>
                         </div>
                     </div>
+                    <button class="gpc-play-btn" style="--g:var(--accent-yellow)">Jugar <i class="fa-solid fa-play"></i></button>
+                </div>
+                <div class="game-page-card" data-game="untangle">
+                    <div class="gpc-top" style="--g:var(--accent-purple)">
+                        <i class="fa-solid fa-circle-nodes gpc-icon"></i>
+                    </div>
+                    <div class="gpc-body">
+                        <h3>Desenredar Nodos</h3>
+                        <p>Mueve los nodos del grafo hasta que ninguna línea se cruce. Tres modos de dificultad.</p>
+                        <div class="gpc-tags">
+                            <span class="gpc-tag">Lógica</span>
+                            <span class="gpc-tag">3 modos</span>
+                        </div>
+                    </div>
+                    <button class="gpc-play-btn" style="--g:var(--accent-purple)">Jugar <i class="fa-solid fa-play"></i></button>
+                </div>
+                <div class="game-page-card" data-game="printlock">
+                    <div class="gpc-top" style="--g:var(--accent-green)">
+                        <i class="fa-solid fa-fingerprint gpc-icon"></i>
+                    </div>
+                    <div class="gpc-body">
+                        <h3>Pirateo de Huella</h3>
+                        <p>Alinea los fragmentos de la huella dactilar rotando las franjas hasta descifrarla.</p>
+                        <div class="gpc-tags">
+                            <span class="gpc-tag">Precisión</span>
+                            <span class="gpc-tag">3 modos</span>
+                        </div>
+                    </div>
+                    <button class="gpc-play-btn" style="--g:var(--accent-green)">Jugar <i class="fa-solid fa-play"></i></button>
+                </div>
+                <div class="game-page-card" data-game="pathfind">
+                    <div class="gpc-top" style="--g:var(--accent-cyan)">
+                        <i class="fa-solid fa-route gpc-icon"></i>
+                    </div>
+                    <div class="gpc-body">
+                        <h3>Conector de Puntos</h3>
+                        <p>Conecta los nodos siempre yendo al punto más cercano. Un error penaliza 2 segundos.</p>
+                        <div class="gpc-tags">
+                            <span class="gpc-tag">Estrategia</span>
+                            <span class="gpc-tag">3 modos</span>
+                        </div>
+                    </div>
+                    <button class="gpc-play-btn" style="--g:var(--accent-cyan)">Jugar <i class="fa-solid fa-play"></i></button>
                 </div>
             </div>
+        </div>
 
-            <!-- Suggest Game Form -->
-            <div class="suggest-box">
-                <h4>¿Qué juego añadimos?</h4>
-                <p>Propón el siguiente minijuego que quieres que desarrollemos.</p>
-                <form id="suggest-form">
-                    <input type="text" id="suggest-input" placeholder="Ej. Simon Says, Sudoku..." required aria-label="Nombre del juego propuesto">
-                    <button type="submit" id="suggest-submit-btn" class="primary-btn btn-sm">Enviar</button>
-                </form>
-                <p id="suggest-feedback" class="suggest-feedback hidden">¡Propuesta guardada! 🚀</p>
+        <!-- ═══════════════ LEADERBOARD VIEW ═══════════════ -->
+        <div id="leaderboard-view" class="view">
+            <div class="view-header-bar">
+                <h1 class="view-title"><i class="fa-solid fa-trophy" style="color:var(--accent-yellow)"></i> Leaderboard Global</h1>
+                <p class="view-subtitle">Top 10 mundial por categoría · Tiempo real via Firebase</p>
             </div>
-        </aside>
+            <div class="lb-full-grid" id="lb-full-grid">
+                <!-- Cards populated by JS -->
+            </div>
+        </div>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Hub View -->
-            <section id="hub-view" class="view active-view">
-                <header class="hub-header">
-                    <h1 class="main-heading">Entrena tus habilidades</h1>
-                    <p class="sub-heading">Selecciona uno de nuestros minijuegos para poner a prueba tu velocidad mental, concentración y precisión.</p>
-                </header>
-
-                <!-- Grid of Games -->
-                <div class="games-grid">
-                    <!-- Game 1: Reaction Time (Active) -->
-                    <article class="game-card active-card" id="card-reaction">
-                        <div class="game-badge active-badge">JUGAR AHORA</div>
-                        <div class="game-card-content">
-                            <div class="game-icon-container reaction-theme">
-                                <i class="fa-solid fa-bolt"></i>
-                            </div>
-                            <h3 class="game-title">Reflejos Rápidos</h3>
-                            <p class="game-description">Mide tu tiempo de reacción en milisegundos. ¿Serás más rápido que un rayo?</p>
-                             <div class="game-meta">
-                                 <span class="difficulty easy"><i class="fa-solid fa-circle"></i> Fácil</span>
-                                 <span class="play-stat"><i class="fa-solid fa-trophy"></i> Récord: <strong id="card-reaction-record">-- ms</strong></span>
-                             </div>
-                            <button id="play-reaction-btn" class="play-button" aria-label="Jugar a Reflejos Rápidos">
-                                Empezar <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </article>
-
-                    <!-- Game 2: Untangle Game (Active) -->
-                    <article class="game-card active-card" id="card-untangle">
-                        <div class="game-badge active-badge">JUGAR AHORA</div>
-                        <div class="game-card-content">
-                            <div class="game-icon-container untangle-theme">
-                                <i class="fa-solid fa-diagram-project"></i>
-                            </div>
-                            <h3 class="game-title">Desenredar Nodos</h3>
-                            <p class="game-description">Mueve los 12 nodos de la red para desenredar el anillo. Cada nodo está conectado a 2 cuerdas y no puede tener más.</p>
-                            <div class="game-meta" style="flex-direction: column; align-items: flex-start; gap: 0.35rem; width: 100%;">
-                                <span class="difficulty medium"><i class="fa-solid fa-circle"></i> Varios Modos</span>
-                                <span class="play-stat" style="font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; width: 100%;">
-                                    <span>Fácil: <strong id="card-untangle-record-facil">-- s</strong></span>
-                                    <span>Medio: <strong id="card-untangle-record-medio">-- s</strong></span>
-                                    <span>Realista: <strong id="card-untangle-record-realista">-- s</strong></span>
-                                </span>
-                            </div>
-                            <button id="play-untangle-btn" class="play-button" aria-label="Jugar a Desenredar Nodos">
-                                Empezar <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </article>
-
-                    <!-- Game 4: PrintLock Game (Active) -->
-                    <article class="game-card active-card" id="card-printlock">
-                        <div class="game-badge active-badge">JUGAR AHORA</div>
-                        <div class="game-card-content">
-                            <div class="game-icon-container tictac-theme">
-                                <i class="fa-solid fa-fingerprint"></i>
-                            </div>
-                            <h3 class="game-title">Pirateo de Huella</h3>
-                            <p class="game-description">Alinea los fragmentos de la huella dactilar para piratear la terminal. Una sección fija te servirá de guía.</p>
-                            <div class="game-meta" style="flex-direction: column; align-items: flex-start; gap: 0.35rem; width: 100%;">
-                                <span class="difficulty medium"><i class="fa-solid fa-circle"></i> Varios Modos</span>
-                                <span class="play-stat" style="font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; width: 100%;">
-                                    <span>Fácil: <strong id="card-printlock-record-facil">-- s</strong></span>
-                                    <span>Medio: <strong id="card-printlock-record-medio">-- s</strong></span>
-                                    <span>Realista: <strong id="card-printlock-record-realista">-- s</strong></span>
-                                </span>
-                            </div>
-                            <button id="play-printlock-btn" class="play-button" aria-label="Jugar a Pirateo de Huella">
-                                Empezar <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </article>
-
-                    <!-- Game 5: PathFind Game (Active) -->
-                    <article class="game-card active-card" id="card-pathfind">
-                        <div class="game-badge active-badge">JUGAR AHORA</div>
-                        <div class="game-card-content">
-                            <div class="game-icon-container pathfind-theme">
-                                <i class="fa-solid fa-route"></i>
-                            </div>
-                            <h3 class="game-title">Conectar Puntos (PathFind)</h3>
-                            <p class="game-description">Encuentra y conecta los puntos del mapa seleccionando siempre el más cercano en orden.</p>
-                            <div class="game-meta" style="flex-direction: column; align-items: flex-start; gap: 0.35rem; width: 100%;">
-                                <span class="difficulty easy"><i class="fa-solid fa-circle"></i> Varios Modos</span>
-                                <span class="play-stat" style="font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; width: 100%;">
-                                    <span>Fácil: <strong id="card-pathfind-record-facil">-- s</strong></span>
-                                    <span>Medio: <strong id="card-pathfind-record-medio">-- s</strong></span>
-                                    <span>Realista: <strong id="card-pathfind-record-realista">-- s</strong></span>
-                                </span>
-                            </div>
-                            <button id="play-pathfind-btn" class="play-button" aria-label="Jugar a Conectar Puntos">
-                                Empezar <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-             <!-- Game View: Reaction Time -->
-             <section id="game-reaction-view" class="view">
+        <!-- ═══════════════ GAME VIEWS ═══════════════ -->
+        <section id="game-reaction-view" class="view">
                  <div class="game-view-header">
                      <button id="back-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
                      <h2><i class="fa-solid fa-bolt text-yellow"></i> Prueba de Reflejos Rápidos</h2>
@@ -348,9 +269,7 @@
                          </div>
                  </div>
              </section>
-
-            <!-- Game View: Untangle -->
-            <section id="game-untangle-view" class="view">
+        <section id="game-untangle-view" class="view">
                 <div class="game-view-header">
                     <button id="back-untangle-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
                     <h2><i class="fa-solid fa-diagram-project text-purple"></i> Rompecabezas: Desenredar Nodos</h2>
@@ -447,9 +366,7 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Game View: PrintLock -->
-            <section id="game-printlock-view" class="view">
+        <section id="game-printlock-view" class="view">
                 <div class="game-view-header">
                     <button id="back-printlock-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
                 </div>
@@ -558,9 +475,7 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Game View: PathFind -->
-            <section id="game-pathfind-view" class="view">
+        <section id="game-pathfind-view" class="view">
                 <div class="game-view-header">
                     <button id="back-pathfind-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
                 </div>
@@ -663,7 +578,8 @@
                     </div>
                 </div>
             </section>
-        </main>
+
+    </div><!-- /.app-wrapper -->
 
     <!-- Edit Profile Modal -->
     <div id="edit-profile-modal" class="modal-overlay hidden">
@@ -697,6 +613,6 @@
     </div>
 
     <!-- Main JavaScript -->
-    <script src="app.js?v=1.0.7"></script>
+    <script src="app.js?v=1.0.8"></script>
 </body>
 </html>

@@ -81,61 +81,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- DOM Elements ---
-    // Sidebar Elements
-    const elPlayerName = document.getElementById('player-name');
-    const elEditNameBtn = document.getElementById('edit-name-btn');
-    const elStatTotalGames = document.getElementById('stat-total-games');
-    const elStatBestReaction = document.getElementById('stat-best-reaction');
-    
-    const elStatBestUntangleFacil = document.getElementById('stat-best-untangle-facil');
-    const elStatBestUntangleMedio = document.getElementById('stat-best-untangle-medio');
-    const elStatBestUntangleRealista = document.getElementById('stat-best-untangle-realista');
-    
-    const elStatBestPrintLockFacil = document.getElementById('stat-best-printlock-facil');
-    const elStatBestPrintLockMedio = document.getElementById('stat-best-printlock-medio');
-    const elStatBestPrintLockRealista = document.getElementById('stat-best-printlock-realista');
+    // Navbar
+    const elPlayerName = document.getElementById('nav-player-name');
+    const elEditNameBtn = document.getElementById('nav-edit-name-btn');
 
-    const elStatBestPathFindFacil = document.getElementById('stat-best-pathfind-facil');
-    const elStatBestPathFindMedio = document.getElementById('stat-best-pathfind-medio');
-    const elStatBestPathFindRealista = document.getElementById('stat-best-pathfind-realista');
-    
-    const elResetStatsBtn = document.getElementById('reset-stats-btn');
-    
-    // Sidebar Stats Tabs
-    const elTabMyRecordsBtn = document.getElementById('tab-my-records-btn');
-    const elTabGlobalRecordsBtn = document.getElementById('tab-global-records-btn');
-    const elPanelMyRecords = document.getElementById('panel-my-records');
-    const elPanelGlobalRecords = document.getElementById('panel-global-records');
-    
-    // Global Leaderboard Panel Elements
-    const elLeaderboardGameSelector = document.getElementById('leaderboard-game-selector');
-    const elLeaderboardTableBody = document.getElementById('leaderboard-table-body');
-    const elLeaderboardLoadingMsg = document.getElementById('leaderboard-loading-msg');
-    const elLeaderboardErrorMsg = document.getElementById('leaderboard-error-msg');
-    
-    // Suggestion Elements
-    const elSuggestForm = document.getElementById('suggest-form');
-    const elSuggestInput = document.getElementById('suggest-input');
-    const elSuggestFeedback = document.getElementById('suggest-feedback');
+    // Dummy refs (no longer in DOM — kept to avoid reference errors)
+    const elStatTotalGames        = { textContent: '' };
+    const elStatBestReaction      = { textContent: '' };
+    const elStatBestUntangleFacil    = { textContent: '' };
+    const elStatBestUntangleMedio    = { textContent: '' };
+    const elStatBestUntangleRealista = { textContent: '' };
+    const elStatBestPrintLockFacil    = { textContent: '' };
+    const elStatBestPrintLockMedio    = { textContent: '' };
+    const elStatBestPrintLockRealista = { textContent: '' };
+    const elStatBestPathFindFacil    = { textContent: '' };
+    const elStatBestPathFindMedio    = { textContent: '' };
+    const elStatBestPathFindRealista = { textContent: '' };
+    const elResetStatsBtn = null;
+    const elTabMyRecordsBtn = null; const elTabGlobalRecordsBtn = null;
+    const elPanelMyRecords = null; const elPanelGlobalRecords = null;
+    const elLeaderboardGameSelector = null; const elLeaderboardTableBody = null;
+    const elLeaderboardLoadingMsg = null; const elLeaderboardErrorMsg = null;
+    const elSuggestForm = null; const elSuggestInput = null; const elSuggestFeedback = null;
 
-    // Navigation Views
-    const elHubView = document.getElementById('hub-view');
+    // Views
+    const elHubView = document.getElementById('home-view'); // mapped to new home view
     const elGameReactionView = document.getElementById('game-reaction-view');
     const elGameUntangleView = document.getElementById('game-untangle-view');
     const elGamePrintLockView = document.getElementById('game-printlock-view');
     const elGamePathFindView = document.getElementById('game-pathfind-view');
-    
-    const elPlayReactionBtn = document.getElementById('play-reaction-btn');
-    const elBackToHubBtn = document.getElementById('back-to-hub-btn');
-    
-    const elPlayUntangleBtn = document.getElementById('play-untangle-btn');
-    const elBackUntangleToHubBtn = document.getElementById('back-untangle-to-hub-btn');
-    
-    const elPlayPrintLockBtn = document.getElementById('play-printlock-btn');
-    const elBackPrintLockToHubBtn = document.getElementById('back-printlock-to-hub-btn');
 
-    const elPlayPathFindBtn = document.getElementById('play-pathfind-btn');
-    const elBackPathFindToHubBtn = document.getElementById('back-pathfind-to-hub-btn');
+    const elPlayReactionBtn = null; const elBackToHubBtn = document.getElementById('back-to-hub-btn');
+    const elPlayUntangleBtn = null; const elBackUntangleToHubBtn = document.getElementById('back-untangle-to-hub-btn');
+    const elPlayPrintLockBtn = null; const elBackPrintLockToHubBtn = document.getElementById('back-printlock-to-hub-btn');
+    const elPlayPathFindBtn = null; const elBackPathFindToHubBtn = document.getElementById('back-pathfind-to-hub-btn');
 
     // Reaction Game Elements
     const elReactionScreen = document.getElementById('reaction-screen');
@@ -300,22 +279,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Init & Load ---
     function initialize() {
         const storedName = localStorage.getItem('arcade_player_name');
-        
-        // Always show the welcome onboarding modal on page load
-        elWelcomeModal.classList.remove('hidden');
-        
+
         if (storedName) {
-            // Pre-fill input with the previously used name
-            elWelcomeNameInput.value = storedName;
             state.player.name = storedName;
             loadDataFromStorage();
             updateDashboardUI();
+            // Skip welcome modal — go straight to app
+            startHomeLbPolling();
+        } else {
+            elWelcomeModal.classList.remove('hidden');
+            elWelcomeNameInput.focus();
         }
-        
-        elWelcomeNameInput.focus();
-        
+
+        // Navbar buttons
+        document.getElementById('nav-home-btn')?.addEventListener('click', () => switchView('home'));
+        document.getElementById('nav-games-btn')?.addEventListener('click', () => switchView('games'));
+        document.getElementById('nav-leaderboard-btn')?.addEventListener('click', () => switchView('leaderboard'));
+
+        // Home game cards
+        document.querySelectorAll('.home-game-card').forEach(card => {
+            card.addEventListener('click', () => switchView(card.dataset.game));
+        });
+
+        // Hero CTA → goes to games page
+        document.getElementById('hero-play-btn')?.addEventListener('click', () => switchView('games'));
+
+        // Games page cards
+        document.querySelectorAll('.game-page-card').forEach(card => {
+            card.addEventListener('click', () => switchView(card.dataset.game));
+        });
+
+        // Home leaderboard selector
+        document.getElementById('home-lb-selector')?.addEventListener('change', (e) => {
+            if (homeLbInterval) clearInterval(homeLbInterval);
+            loadHomeLb(e.target.value);
+            homeLbInterval = setInterval(() => loadHomeLb(e.target.value), 10000);
+        });
+
         setupEventListeners();
         setupUntangleListeners();
+        startHomeLbPolling();
     }
 
     // --- Data Persistence ---
@@ -359,78 +362,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- UI Update Functions ---
     function updateDashboardUI() {
-        elPlayerName.textContent = state.player.name;
-        
-        let title = 'Entrenador Novato';
-        if (state.stats.totalGames > 25) {
-            title = 'Veterano del Arcade';
-        } else if (state.stats.totalGames > 10) {
-            title = 'Reflejos de Acero';
-        } else if (state.stats.totalGames > 3) {
-            title = 'Iniciado Competitivo';
-        }
-        state.player.title = title;
-        document.querySelector('.player-title').textContent = title;
+        if (elPlayerName) elPlayerName.textContent = state.player.name;
 
-        // Statistics
-        elStatTotalGames.textContent = state.stats.totalGames;
-        
-        // Reaction
+        // Update in-game personal best panels
         const bestTimeStr = state.stats.bestReaction ? `${state.stats.bestReaction} ms` : '-- ms';
-        elStatBestReaction.textContent = bestTimeStr;
-        elReactionBestValue.textContent = bestTimeStr;
-        elCardReactionRecord.textContent = bestTimeStr;
+        if (elReactionBestValue) elReactionBestValue.textContent = bestTimeStr;
+        if (elCardReactionRecord) elCardReactionRecord.textContent = bestTimeStr;
 
-        // Untangle
         const ufStr = state.stats.bestUntangleFacil ? `${state.stats.bestUntangleFacil.toFixed(1)} s` : '-- s';
         const umStr = state.stats.bestUntangleMedio ? `${state.stats.bestUntangleMedio.toFixed(1)} s` : '-- s';
         const urStr = state.stats.bestUntangleRealista ? `${state.stats.bestUntangleRealista.toFixed(1)} s` : '-- s';
+        if (elUntangleBestFacilVal) elUntangleBestFacilVal.textContent = ufStr;
+        if (elUntangleBestMedioVal) elUntangleBestMedioVal.textContent = umStr;
+        if (elUntangleBestRealistaVal) elUntangleBestRealistaVal.textContent = urStr;
 
-        elStatBestUntangleFacil.textContent = ufStr;
-        elStatBestUntangleMedio.textContent = umStr;
-        elStatBestUntangleRealista.textContent = urStr;
-
-        elCardUntangleRecordFacil.textContent = ufStr;
-        elCardUntangleRecordMedio.textContent = umStr;
-        elCardUntangleRecordRealista.textContent = urStr;
-
-        elUntangleBestFacilVal.textContent = ufStr;
-        elUntangleBestMedioVal.textContent = umStr;
-        elUntangleBestRealistaVal.textContent = urStr;
-
-        // PrintLock
         const pfStr = state.stats.bestPrintLockFacil ? `${state.stats.bestPrintLockFacil.toFixed(1)} s` : '-- s';
         const pmStr = state.stats.bestPrintLockMedio ? `${state.stats.bestPrintLockMedio.toFixed(1)} s` : '-- s';
         const prStr = state.stats.bestPrintLockRealista ? `${state.stats.bestPrintLockRealista.toFixed(1)} s` : '-- s';
+        if (elPrintLockBestFacilVal) elPrintLockBestFacilVal.textContent = pfStr;
+        if (elPrintLockBestMedioVal) elPrintLockBestMedioVal.textContent = pmStr;
+        if (elPrintLockBestRealistaVal) elPrintLockBestRealistaVal.textContent = prStr;
 
-        elStatBestPrintLockFacil.textContent = pfStr;
-        elStatBestPrintLockMedio.textContent = pmStr;
-        elStatBestPrintLockRealista.textContent = prStr;
-
-        elPrintLockBestFacilVal.textContent = pfStr;
-        elPrintLockBestMedioVal.textContent = pmStr;
-        elPrintLockBestRealistaVal.textContent = prStr;
-
-        if (elCardPrintLockRecordFacil) elCardPrintLockRecordFacil.textContent = pfStr;
-        if (elCardPrintLockRecordMedio) elCardPrintLockRecordMedio.textContent = pmStr;
-        if (elCardPrintLockRecordRealista) elCardPrintLockRecordRealista.textContent = prStr;
-
-        // PathFind
         const pathfStr = state.stats.bestPathFindFacil ? `${state.stats.bestPathFindFacil.toFixed(1)} s` : '-- s';
         const pathmStr = state.stats.bestPathFindMedio ? `${state.stats.bestPathFindMedio.toFixed(1)} s` : '-- s';
         const pathrStr = state.stats.bestPathFindRealista ? `${state.stats.bestPathFindRealista.toFixed(1)} s` : '-- s';
-
-        elStatBestPathFindFacil.textContent = pathfStr;
-        elStatBestPathFindMedio.textContent = pathmStr;
-        elStatBestPathFindRealista.textContent = pathrStr;
-
-        elPathFindBestFacilVal.textContent = pathfStr;
-        elPathFindBestMedioVal.textContent = pathmStr;
-        elPathFindBestRealistaVal.textContent = pathrStr;
-
-        elCardPathFindRecordFacil.textContent = pathfStr;
-        elCardPathFindRecordMedio.textContent = pathmStr;
-        elCardPathFindRecordRealista.textContent = pathrStr;
+        if (elPathFindBestFacilVal) elPathFindBestFacilVal.textContent = pathfStr;
+        if (elPathFindBestMedioVal) elPathFindBestMedioVal.textContent = pathmStr;
+        if (elPathFindBestRealistaVal) elPathFindBestRealistaVal.textContent = pathrStr;
     }
 
     // --- Global Live Leaderboard Operations ---
@@ -618,29 +576,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Navigation ---
+    const ALL_VIEWS = ['home-view','games-view','leaderboard-view',
+        'game-reaction-view','game-untangle-view','game-printlock-view','game-pathfind-view'];
+
+    function setActiveNavBtn(viewName) {
+        ['nav-home-btn','nav-games-btn','nav-leaderboard-btn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.classList.remove('active');
+        });
+        if (viewName === 'home')        document.getElementById('nav-home-btn')?.classList.add('active');
+        else if (viewName === 'games')  document.getElementById('nav-games-btn')?.classList.add('active');
+        else if (viewName === 'leaderboard') document.getElementById('nav-leaderboard-btn')?.classList.add('active');
+    }
+
     function switchView(viewToShow) {
-        elHubView.classList.remove('active-view');
-        elGameReactionView.classList.remove('active-view');
-        elGameUntangleView.classList.remove('active-view');
-        elGamePrintLockView.classList.remove('active-view');
-        elGamePathFindView.classList.remove('active-view');
+        ALL_VIEWS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active-view');
+        });
 
-        if (state.untangleGame.timerIntervalId) {
-            clearInterval(state.untangleGame.timerIntervalId);
-            state.untangleGame.timerIntervalId = null;
-        }
-        if (state.printlockGame.timerIntervalId) {
-            clearInterval(state.printlockGame.timerIntervalId);
-            state.printlockGame.timerIntervalId = null;
-        }
-        if (state.pathfindGame.timerIntervalId) {
-            clearInterval(state.pathfindGame.timerIntervalId);
-            state.pathfindGame.timerIntervalId = null;
-        }
+        // Stop running timers
+        if (state.untangleGame.timerIntervalId) { clearInterval(state.untangleGame.timerIntervalId); state.untangleGame.timerIntervalId = null; }
+        if (state.printlockGame.timerIntervalId) { clearInterval(state.printlockGame.timerIntervalId); state.printlockGame.timerIntervalId = null; }
+        if (state.pathfindGame.timerIntervalId) { clearInterval(state.pathfindGame.timerIntervalId); state.pathfindGame.timerIntervalId = null; }
 
-        if (viewToShow === 'hub') {
-            elHubView.classList.add('active-view');
+        setActiveNavBtn(viewToShow);
+
+        if (viewToShow === 'home' || viewToShow === 'hub') {
+            document.getElementById('home-view').classList.add('active-view');
             updateDashboardUI();
+        } else if (viewToShow === 'games') {
+            document.getElementById('games-view').classList.add('active-view');
+        } else if (viewToShow === 'leaderboard') {
+            document.getElementById('leaderboard-view').classList.add('active-view');
+            loadFullLeaderboard();
         } else if (viewToShow === 'reaction') {
             elGameReactionView.classList.add('active-view');
             showPregameOverlay('reaction');
@@ -666,6 +635,116 @@ document.addEventListener('DOMContentLoaded', () => {
             state.pathfindGame.realisticTimes = [];
             showPregameOverlay('pathfind');
         }
+    }
+
+    // ── Full Leaderboard Page ──────────────────────────────────────────────────
+    const LB_CATEGORIES = [
+        { key: 'reaction',          label: 'Reflejos Rápidos',    sub: '',         icon: '⚡', isReaction: true  },
+        { key: 'untangle_facil',    label: 'Desenredar Nodos',    sub: 'Fácil',    icon: '🟣', isReaction: false },
+        { key: 'untangle_medio',    label: 'Desenredar Nodos',    sub: 'Medio',    icon: '🟣', isReaction: false },
+        { key: 'untangle_realista', label: 'Desenredar Nodos',    sub: 'Realista', icon: '🟣', isReaction: false },
+        { key: 'printlock_facil',   label: 'Pirateo de Huella',   sub: 'Fácil',    icon: '🟢', isReaction: false },
+        { key: 'printlock_medio',   label: 'Pirateo de Huella',   sub: 'Medio',    icon: '🟢', isReaction: false },
+        { key: 'printlock_realista',label: 'Pirateo de Huella',   sub: 'Realista', icon: '🟢', isReaction: false },
+        { key: 'pathfind_facil',    label: 'Conector de Puntos',  sub: 'Fácil',    icon: '🟡', isReaction: false },
+        { key: 'pathfind_medio',    label: 'Conector de Puntos',  sub: 'Medio',    icon: '🟡', isReaction: false },
+        { key: 'pathfind_realista', label: 'Conector de Puntos',  sub: 'Realista', icon: '🟡', isReaction: false },
+    ];
+
+    function loadFullLeaderboard() {
+        const grid = document.getElementById('lb-full-grid');
+        if (!grid) return;
+        const playerName = state.player.name;
+
+        // Build skeleton cards
+        grid.innerHTML = LB_CATEGORIES.map(cat => `
+            <div class="lb-card" id="lbcard-${cat.key}">
+                <div class="lb-card-header">
+                    <span class="lb-card-icon">${cat.icon}</span>
+                    <div>
+                        <div class="lb-card-title">${cat.label}</div>
+                        ${cat.sub ? `<div class="lb-card-subtitle">${cat.sub}</div>` : ''}
+                    </div>
+                </div>
+                <div class="lb-card-loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</div>
+            </div>
+        `).join('');
+
+        // Fetch each category
+        LB_CATEGORIES.forEach(cat => {
+            const card = document.getElementById(`lbcard-${cat.key}`);
+            fetch(`${FIREBASE_URL}/leaderboard/${cat.key}.json`)
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    let entries = [];
+                    if (data && typeof data === 'object') {
+                        entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 10);
+                    }
+                    const medals = ['🥇','🥈','🥉'];
+                    if (entries.length === 0) {
+                        card.innerHTML = card.innerHTML.replace(/<div class="lb-card-loading">.*?<\/div>/s,
+                            '<div class="lb-card-loading" style="font-style:italic">¡Sé el primero!</div>');
+                        return;
+                    }
+                    const rows = entries.map((e,i) => {
+                        const pos = i < 3 ? medals[i] : `#${i+1}`;
+                        const sc  = cat.isReaction ? `${Math.round(e.score)} ms` : `${e.score.toFixed(1)} s`;
+                        const mine = e.name === playerName ? 'my-row' : '';
+                        return `<tr class="${mine}"><td>${pos}</td><td>${e.name}</td><td>${sc}</td></tr>`;
+                    }).join('');
+                    card.querySelector('.lb-card-loading').outerHTML = `<table class="lb-card-table"><tbody>${rows}</tbody></table>`;
+                })
+                .catch(() => {
+                    card.querySelector('.lb-card-loading').textContent = 'Error de conexión';
+                });
+        });
+    }
+
+    // ── Home Leaderboard Widget ───────────────────────────────────────────────
+    let homeLbInterval = null;
+
+    function loadHomeLb(key) {
+        const tbody  = document.getElementById('home-lb-tbody');
+        const status = document.getElementById('home-lb-loading');
+        if (!tbody) return;
+        if (status) { status.style.display = 'block'; }
+        tbody.innerHTML = '';
+
+        const isReaction = key === 'reaction';
+        const playerName = state.player.name;
+
+        fetch(`${FIREBASE_URL}/leaderboard/${key}.json`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                let entries = [];
+                if (data && typeof data === 'object') {
+                    entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 10);
+                }
+                if (status) status.style.display = 'none';
+                if (entries.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem">¡Sé el primero!</td></tr>';
+                    return;
+                }
+                const medals = ['🥇','🥈','🥉'];
+                tbody.innerHTML = entries.map((e,i) => {
+                    const pos = i < 3 ? medals[i] : `#${i+1}`;
+                    const sc  = isReaction ? `${Math.round(e.score)} ms` : `${e.score.toFixed(1)} s`;
+                    const mine = e.name === playerName ? 'my-row' : '';
+                    return `<tr class="${mine}"><td>${pos}</td><td>${e.name}</td><td>${sc}</td></tr>`;
+                }).join('');
+            })
+            .catch(() => {
+                if (status) status.style.display = 'none';
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1rem">Error de conexión</td></tr>';
+            });
+    }
+
+    function startHomeLbPolling() {
+        const sel = document.getElementById('home-lb-selector');
+        if (!sel) return;
+        loadHomeLb(sel.value);
+        if (homeLbInterval) clearInterval(homeLbInterval);
+        homeLbInterval = setInterval(() => loadHomeLb(sel.value), 10000);
     }
 
     // --- Pre-Game Overlay Logic ---
@@ -782,6 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
             elWelcomeModal.classList.add('hidden');
             loadDataFromStorage();
             updateDashboardUI();
+            startHomeLbPolling();
         }
     }
 
@@ -2296,37 +2376,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter') saveWelcomeName();
         });
 
-        // Sidebar Tabs Switcher
-        elTabMyRecordsBtn.addEventListener('click', () => {
-            elTabMyRecordsBtn.classList.add('active');
-            elTabGlobalRecordsBtn.classList.remove('active');
-            elPanelMyRecords.classList.remove('hidden');
-            elPanelGlobalRecords.classList.add('hidden');
-            stopLeaderboardPolling();
-        });
-
-        elTabGlobalRecordsBtn.addEventListener('click', () => {
-            elTabGlobalRecordsBtn.classList.add('active');
-            elTabMyRecordsBtn.classList.remove('active');
-            elPanelGlobalRecords.classList.remove('hidden');
-            elPanelMyRecords.classList.add('hidden');
-            startLeaderboardPolling();
-        });
-
-        elLeaderboardGameSelector.addEventListener('change', renderLeaderboardTable);
-
         // Navigation clicks
-        elPlayReactionBtn.addEventListener('click', () => switchView('reaction'));
-        elBackToHubBtn.addEventListener('click', () => switchView('hub'));
+        elPlayReactionBtn?.addEventListener('click', () => switchView('reaction'));
+        elBackToHubBtn.addEventListener('click', () => switchView('home'));
         
-        elPlayUntangleBtn.addEventListener('click', () => switchView('untangle'));
-        elBackUntangleToHubBtn.addEventListener('click', () => switchView('hub'));
-        
-        elPlayPrintLockBtn.addEventListener('click', () => switchView('printlock'));
-        elBackPrintLockToHubBtn.addEventListener('click', () => switchView('hub'));
-
-        elPlayPathFindBtn.addEventListener('click', () => switchView('pathfind'));
-        elBackPathFindToHubBtn.addEventListener('click', () => switchView('hub'));
+        elBackUntangleToHubBtn.addEventListener('click', () => switchView('home'));
+        elBackPrintLockToHubBtn.addEventListener('click', () => switchView('home'));
+        elBackPathFindToHubBtn.addEventListener('click', () => switchView('home'));
         
         // Mode clicks (Untangle)
         elModeFacilBtn.addEventListener('click', () => {
@@ -2445,12 +2501,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 initPathFindGame();
             }
         });
-
-        // Submit Game Suggestion
-        elSuggestForm.addEventListener('submit', handleSuggestionSubmit);
-
-        // Reset statistics
-        elResetStatsBtn.addEventListener('click', resetPlayerStats);
     }
 
     // Run Initialization
