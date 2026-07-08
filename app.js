@@ -424,7 +424,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const entry = {
                         name: player,
                         score: scoreValue,
-                        date: new Date().toISOString().split('T')[0]
+                        date: new Date().toISOString().split('T')[0],
+                        hash: getChecksum(gameKey, player, scoreValue)
                     };
                     return fetch(listUrl, {
                         method: 'POST',
@@ -492,7 +493,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 let entries = [];
                 if (data && typeof data === 'object') {
-                    entries = Object.values(data).sort((a, b) => a.score - b.score).slice(0, 10);
+                    entries = Object.values(data).filter(e => {
+                        return e && e.hash === getChecksum(firebaseKey, e.name, e.score);
+                    }).sort((a, b) => a.score - b.score).slice(0, 10);
                 }
                 if (entries.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" class="lb-empty" style="padding: 0.5rem 0;">¡Sé el primero!</td></tr>';
@@ -628,7 +631,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     let entries = [];
                     if (data && typeof data === 'object') {
-                        entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 10);
+                        entries = Object.values(data).filter(e => {
+                            return e && e.hash === getChecksum(cat.key, e.name, e.score);
+                        }).sort((a,b) => a.score - b.score).slice(0, 10);
                     }
 
                     // Process Top 1 point
@@ -714,7 +719,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     let entries = [];
                     if (data && typeof data === 'object') {
-                        entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 1);
+                        entries = Object.values(data).filter(e => {
+                            return e && e.hash === getChecksum(cat.key, e.name, e.score);
+                        }).sort((a,b) => a.score - b.score).slice(0, 1);
                     }
                     if (entries.length > 0) {
                         const topPlayer = entries[0].name;
@@ -931,12 +938,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearTimeout(game.timeoutId);
                 }
                 game.currentState = 'failed';
-                setReactionScreenState('failed', '¡Demasiado pronto!', 'Haz clic para volver a intentarlo.', 'fa-circle-exclamation');
+                setReactionScreenState('failed', '¡NO HAGAS PREDICT!', 'Juega limpio. Haz clic para volver a intentarlo.', 'fa-circle-exclamation');
                 break;
 
             case 'green':
                 const clickTime = performance.now();
                 const reactionTime = Math.round(clickTime - game.startTime);
+
+                // Anti-cheat & clock-safety check: Reaction time < 60ms is physically impossible
+                // and indicates either a clock jitter, a bot, or a lucky "predict" click.
+                if (reactionTime < 60) {
+                    game.currentState = 'failed';
+                    setReactionScreenState('failed', '¡NO HAGAS PREDICT!', 'Intento inválido por hacer predict. Haz clic para reintentar.', 'fa-circle-exclamation');
+                    break;
+                }
+
                 game.currentState = 'result';
                 
                 state.stats.totalGames++;
