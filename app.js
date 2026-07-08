@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const gameKey = elLeaderboardGameSelector.value;
-        const url = `${FIREBASE_URL}/leaderboard/${gameKey}.json?orderBy="score"&limitToFirst=10`;
+        const url = `${FIREBASE_URL}/leaderboard/${gameKey}.json`;
 
         fetch(url)
             .then(res => {
@@ -682,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fetchPregameLeaderboard(firebaseKey, tbodyEl, isReaction) {
         tbodyEl.innerHTML = '<tr><td colspan="3" class="lb-loading">Cargando...</td></tr>';
-        const url = `${FIREBASE_URL}/leaderboard/${firebaseKey}.json?orderBy="score"&limitToFirst=10`;
+        const url = `${FIREBASE_URL}/leaderboard/${firebaseKey}.json`;
         fetch(url)
             .then(r => r.ok ? r.json() : null)
             .then(data => {
