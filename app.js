@@ -145,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const elReactionScoresList = document.getElementById('reaction-scores-list');
     const elReactionBestValue = document.getElementById('reaction-best-value');
     const elCardReactionRecord = document.getElementById('card-reaction-record');
-    const elReactionUploadBtn = document.getElementById('reaction-upload-btn');
 
     // Untangle Game Elements
     const elUntangleSvg = document.getElementById('untangle-svg');
@@ -153,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const elUntangleIntersections = document.getElementById('untangle-intersections');
     const elUntangleWinOverlay = document.getElementById('untangle-win-overlay');
     const elUntangleNextBtn = document.getElementById('untangle-next-btn');
-    const elUntangleUploadBtn = document.getElementById('untangle-upload-btn');
     const elUntangleRestartBtn = document.getElementById('untangle-restart-btn');
     const elUntangleRulesDesc = document.getElementById('untangle-rules-desc');
     
@@ -182,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const elPrintLockStatusIcon = document.getElementById('printlock-status-icon');
     const elPrintLockWinOverlay = document.getElementById('printlock-win-overlay');
     const elPrintLockNextBtn = document.getElementById('printlock-next-btn');
-    const elPrintLockUploadBtn = document.getElementById('printlock-upload-btn');
     const elPrintLockRestartBtn = document.getElementById('printlock-restart-btn');
     
     // PrintLock Score Panel Values
@@ -212,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const elPathFindRulesDesc = document.getElementById('pathfind-rules-desc');
     const elPathFindWinOverlay = document.getElementById('pathfind-win-overlay');
     const elPathFindNextBtn = document.getElementById('pathfind-next-btn');
-    const elPathFindUploadBtn = document.getElementById('pathfind-upload-btn');
     const elPathFindRestartBtn = document.getElementById('pathfind-restart-btn');
     const elPathFindProgressBar = document.getElementById('pathfind-progress-bar');
     const elPathFindCanvasContainer = document.getElementById('pathfind-canvas-container');
@@ -818,8 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.reactionGame.timeoutId = null;
         state.reactionGame.startTime = null;
         
-        elReactionUploadBtn.style.display = 'none';
-        setReactionScreenState('waiting', 'Haz clic para comenzar', 'Cuando la pantalla se vuelva VERDE, haz clic lo más rápido que puedas.', 'fa-circle-play');
+                setReactionScreenState('waiting', 'Haz clic para comenzar', 'Cuando la pantalla se vuelva VERDE, haz clic lo más rápido que puedas.', 'fa-circle-play');
     }
 
     function handleReactionScreenClick() {
@@ -866,11 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     game.sessionScores.pop();
                 }
 
-                elReactionUploadBtn.style.display = 'block';
-                elReactionUploadBtn.onclick = () => {
-                    submitScoreToFirebase('reaction', reactionTime);
-                    elReactionUploadBtn.style.display = 'none';
-                };
+                if (isNewBest) submitScoreToFirebase('reaction', reactionTime);
 
                 const instructionText = `¡${reactionTime} ms!`;
                 const tipText = isNewBest ? '🏆 ¡NUEVO RÉCORD PERSONAL! Haz clic para continuar.' : 'Buen intento. Haz clic para jugar otra vez.';
@@ -943,8 +934,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         generateUntangleLoop();
         elUntangleWinOverlay.classList.add('hidden');
-        elUntangleUploadBtn.style.display = 'none';
-        game.isSolved = false;
+                game.isSolved = false;
         game.isFailed = false;
         game.draggingNode = null;
         
@@ -1315,11 +1305,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            elUntangleUploadBtn.style.display = 'block';
-            elUntangleUploadBtn.onclick = () => {
-                submitScoreToFirebase('untangle_facil', elapsed);
-                elUntangleUploadBtn.style.display = 'none';
-            };
+            if (isNewBest) submitScoreToFirebase('untangle_facil', elapsed);
             elUntangleWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'medio') {
@@ -1342,11 +1328,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            elUntangleUploadBtn.style.display = 'block';
-            elUntangleUploadBtn.onclick = () => {
-                submitScoreToFirebase('untangle_medio', elapsed);
-                elUntangleUploadBtn.style.display = 'none';
-            };
+            if (isNewBest) submitScoreToFirebase('untangle_medio', elapsed);
             elUntangleWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'realista') {
@@ -1388,11 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
                 );
 
-                elUntangleUploadBtn.style.display = 'block';
-                elUntangleUploadBtn.onclick = () => {
-                    submitScoreToFirebase('untangle_realista', totalAccumulatedTime);
-                    elUntangleUploadBtn.style.display = 'none';
-                };
+                if (isNewBest) submitScoreToFirebase('untangle_realista', totalAccumulatedTime);
                 
                 game.realisticRoundsCleared = 0;
                 game.realisticTimes = [];
@@ -1496,8 +1474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         game.isSolved = false;
         game.isFailed = false;
         elPrintLockWinOverlay.classList.add('hidden');
-        elPrintLockUploadBtn.style.display = 'none';
-        
+                
         renderPrintLockControls();
 
         if (game.currentMode === 'facil') {
@@ -1700,11 +1677,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            elPrintLockUploadBtn.style.display = 'block';
-            elPrintLockUploadBtn.onclick = () => {
-                submitScoreToFirebase('printlock_facil', elapsed);
-                elPrintLockUploadBtn.style.display = 'none';
-            };
+            if (isNewBest) submitScoreToFirebase('printlock_facil', elapsed);
             elPrintLockWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'medio') {
@@ -1727,11 +1700,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            elPrintLockUploadBtn.style.display = 'block';
-            elPrintLockUploadBtn.onclick = () => {
-                submitScoreToFirebase('printlock_medio', elapsed);
-                elPrintLockUploadBtn.style.display = 'none';
-            };
+            if (isNewBest) submitScoreToFirebase('printlock_medio', elapsed);
             elPrintLockWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'realista') {
@@ -1773,11 +1742,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
                 );
 
-                elPrintLockUploadBtn.style.display = 'block';
-                elPrintLockUploadBtn.onclick = () => {
-                    submitScoreToFirebase('printlock_realista', totalAccumulatedTime);
-                    elPrintLockUploadBtn.style.display = 'none';
-                };
+                if (isNewBest) submitScoreToFirebase('printlock_realista', totalAccumulatedTime);
                 
                 game.realisticRoundsCleared = 0;
                 game.realisticTimes = [];
@@ -1860,8 +1825,7 @@ document.addEventListener('DOMContentLoaded', () => {
         game.isSolved = false;
         game.isFailed = false;
         elPathFindWinOverlay.classList.add('hidden');
-        elPathFindUploadBtn.style.display = 'none';
-
+        
         // Set difficulty parameters
         if (game.currentMode === 'facil') {
             elPathFindModeLabel.textContent = 'Fácil';
@@ -2119,11 +2083,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            elPathFindUploadBtn.style.display = 'block';
-            elPathFindUploadBtn.onclick = () => {
-                submitScoreToFirebase('pathfind_facil', elapsed);
-                elPathFindUploadBtn.style.display = 'none';
-            };
+            if (isNewBest) submitScoreToFirebase('pathfind_facil', elapsed);
             elPathFindWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'medio') {
@@ -2146,11 +2106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            elPathFindUploadBtn.style.display = 'block';
-            elPathFindUploadBtn.onclick = () => {
-                submitScoreToFirebase('pathfind_medio', elapsed);
-                elPathFindUploadBtn.style.display = 'none';
-            };
+            if (isNewBest) submitScoreToFirebase('pathfind_medio', elapsed);
             elPathFindWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'realista') {
@@ -2182,11 +2138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
                 );
 
-                elPathFindUploadBtn.style.display = 'block';
-                elPathFindUploadBtn.onclick = () => {
-                    submitScoreToFirebase('pathfind_realista', totalAccumulatedTime);
-                    elPathFindUploadBtn.style.display = 'none';
-                };
+                if (isNewBest) submitScoreToFirebase('pathfind_realista', totalAccumulatedTime);
                 
                 game.realisticRoundsCleared = 0;
                 game.realisticTimes = [];
