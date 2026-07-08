@@ -553,6 +553,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Refresh leaderboard immediately
                         if (state.leaderboard.data) delete state.leaderboard.data[gameKey];
                         fetchLeaderboard(true);
+                        // Refresh side lb for current game
+                        if (gameKey === 'reaction') loadSideLeaderboard('reaction', true, 'reaction-side-lb');
+                        else if (gameKey === 'untangle_realista') loadSideLeaderboard('untangle_realista', false, 'untangle-side-lb');
+                        else if (gameKey === 'printlock_realista') loadSideLeaderboard('printlock_realista', false, 'printlock-side-lb');
+                        else if (gameKey === 'pathfind_realista') loadSideLeaderboard('pathfind_realista', false, 'pathfind-side-lb');
                     })
                     .catch(err => {
                         console.warn('Score upload failed:', err);
@@ -573,6 +578,41 @@ document.addEventListener('DOMContentLoaded', () => {
         toast._hideTimer = setTimeout(() => {
             toast.classList.remove('toast-show');
         }, 4000);
+    }
+
+
+    function loadSideLeaderboard(firebaseKey, isReaction, elementId) {
+        const tbody = document.getElementById(elementId);
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="3" class="lb-loading">Cargando...</td></tr>';
+        const url = `${FIREBASE_URL}/leaderboard/${firebaseKey}.json`;
+        fetch(url)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                let entries = [];
+                if (data && typeof data === 'object') {
+                    entries = Object.values(data).sort((a, b) => a.score - b.score).slice(0, 10);
+                }
+                if (entries.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="lb-empty" style="padding: 0.5rem 0;">¡Sé el primero!</td></tr>';
+                    return;
+                }
+                const medals = ['🥇', '🥈', '🥉'];
+                const playerName = state.player.name;
+                tbody.innerHTML = entries.map((e, i) => {
+                    const pos = i < 3 ? medals[i] : `#${i + 1}`;
+                    const sc  = isReaction ? `${Math.round(e.score)} ms` : `${e.score.toFixed(1)} s`;
+                    const mine = e.name === playerName ? 'my-row' : '';
+                    return `<tr class="${mine}">
+                        <td style="padding: 0.35rem 0.5rem; font-size: 0.78rem;">${pos}</td>
+                        <td style="padding: 0.35rem 0.5rem; font-size: 0.78rem; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${e.name}</td>
+                        <td style="padding: 0.35rem 0.5rem; font-size: 0.78rem; text-align: right;">${sc}</td>
+                    </tr>`;
+                }).join('');
+            })
+            .catch(() => {
+                tbody.innerHTML = '<tr><td colspan="3" class="lb-empty">Error</td></tr>';
+            });
     }
 
     // --- Navigation ---
@@ -612,6 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadFullLeaderboard();
         } else if (viewToShow === 'reaction') {
             elGameReactionView.classList.add('active-view');
+            loadSideLeaderboard('reaction', true, 'reaction-side-lb');
             showPregameOverlay('reaction');
         } else if (viewToShow === 'untangle') {
             elGameUntangleView.classList.add('active-view');
@@ -619,6 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateModeButtonsUI();
             state.untangleGame.realisticRoundsCleared = 0;
             state.untangleGame.realisticTimes = [];
+            loadSideLeaderboard('untangle_realista', false, 'untangle-side-lb');
             showPregameOverlay('untangle');
         } else if (viewToShow === 'printlock') {
             elGamePrintLockView.classList.add('active-view');
@@ -626,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePrintLockModeButtonsUI();
             state.printlockGame.realisticRoundsCleared = 0;
             state.printlockGame.realisticTimes = [];
+            loadSideLeaderboard('printlock_realista', false, 'printlock-side-lb');
             showPregameOverlay('printlock');
         } else if (viewToShow === 'pathfind') {
             elGamePathFindView.classList.add('active-view');
@@ -633,6 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePathFindModeButtonsUI();
             state.pathfindGame.realisticRoundsCleared = 0;
             state.pathfindGame.realisticTimes = [];
+            loadSideLeaderboard('pathfind_realista', false, 'pathfind-side-lb');
             showPregameOverlay('pathfind');
         }
     }
@@ -996,7 +1040,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     game.sessionScores.pop();
                 }
 
-                if (isNewBest) submitScoreToFirebase('reaction', reactionTime);
+                submitScoreToFirebase('reaction', reactionTime);
 
                 const instructionText = `¡${reactionTime} ms!`;
                 const tipText = isNewBest ? '🏆 ¡NUEVO RÉCORD PERSONAL! Haz clic para continuar.' : 'Buen intento. Haz clic para jugar otra vez.';
@@ -1505,7 +1549,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
                 );
 
-                if (isNewBest) submitScoreToFirebase('untangle_realista', totalAccumulatedTime);
+                submitScoreToFirebase('untangle_realista', totalAccumulatedTime);
                 
                 game.realisticRoundsCleared = 0;
                 game.realisticTimes = [];
@@ -1877,7 +1921,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
                 );
 
-                if (isNewBest) submitScoreToFirebase('printlock_realista', totalAccumulatedTime);
+                submitScoreToFirebase('printlock_realista', totalAccumulatedTime);
                 
                 game.realisticRoundsCleared = 0;
                 game.realisticTimes = [];
@@ -2273,7 +2317,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
                 );
 
-                if (isNewBest) submitScoreToFirebase('pathfind_realista', totalAccumulatedTime);
+                submitScoreToFirebase('pathfind_realista', totalAccumulatedTime);
                 
                 game.realisticRoundsCleared = 0;
                 game.realisticTimes = [];

@@ -4286,3 +4286,45 @@ body {
     background: hsla(45, 90%, 50%, 0.05);
 }
 
+
+/* ======================================
+   Side Leaderboard in Game Panels
+====================================== */
+.game-side-lb {
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.game-side-lb h5 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin: 0 0 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.game-side-lb table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.game-side-lb td {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.78rem !important;
+    border-bottom: 1px solid hsla(0, 0%, 100%, 0.03);
+    color: var(--text-secondary);
+}
+
+.game-side-lb tr:last-child td {
+    border-bottom: none;
+}
+
+.game-side-lb tr.my-row td {
+    color: var(--accent-yellow) !important;
+    font-weight: 600;
+}
