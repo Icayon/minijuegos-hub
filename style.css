@@ -688,6 +688,8 @@ body {
 .game-play-area {
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Reaction Test Screen styling */
@@ -1904,4 +1906,217 @@ body {
     background: hsla(0, 65%, 30%, 0.85);
     border-color: hsla(0, 70%, 55%, 0.35);
     box-shadow: 0 4px 24px hsla(0, 70%, 40%, 0.25);
+}
+
+/* ======================================
+   Pre-Game Start Screen Overlay
+====================================== */
+.pregame-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsla(222, 35%, 5%, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    animation: pregameFadeIn 0.35s ease;
+    border-radius: inherit;
+}
+
+.pregame-overlay.hidden {
+    display: none;
+}
+
+@keyframes pregameFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pregameFadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.96); }
+}
+
+.pregame-overlay.hiding {
+    animation: pregameFadeOut 0.25s ease forwards;
+}
+
+.pregame-card {
+    background: hsla(222, 30%, 10%, 0.92);
+    border: 1px solid hsla(190, 90%, 50%, 0.2);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 24px 64px hsla(0, 0%, 0%, 0.5),
+                0 0 0 1px hsla(190, 90%, 50%, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.pregame-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pregame-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 12px currentColor);
+}
+
+.pregame-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.2rem;
+    color: var(--text-primary);
+}
+
+.pregame-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.pregame-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Difficulty selector */
+.pregame-diff-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pregame-diff-btn {
+    flex: 1;
+    padding: 0.5rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background: hsla(0, 0%, 100%, 0.04);
+    color: var(--text-secondary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pregame-diff-btn:hover {
+    background: hsla(190, 90%, 50%, 0.1);
+    border-color: hsla(190, 90%, 50%, 0.3);
+    color: var(--text-primary);
+}
+
+.pregame-diff-btn.active {
+    background: hsla(190, 90%, 50%, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+/* Leaderboard inside pregame */
+.pregame-leaderboard-wrap {
+    background: hsla(0, 0%, 100%, 0.025);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+
+.pregame-lb-title {
+    display: block;
+    padding: 0.55rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text-muted);
+    background: hsla(0, 0%, 100%, 0.03);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pregame-lb-title i {
+    color: var(--accent-yellow);
+    margin-right: 0.35rem;
+}
+
+.pregame-lb-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pregame-lb-table td {
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    border-bottom: 1px solid hsla(0, 0%, 100%, 0.04);
+    color: var(--text-secondary);
+}
+
+.pregame-lb-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pregame-lb-table td:first-child {
+    width: 36px;
+    font-size: 1rem;
+}
+
+.pregame-lb-table td:last-child {
+    text-align: right;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    color: var(--accent-cyan);
+}
+
+.lb-loading {
+    text-align: center !important;
+    color: var(--text-muted) !important;
+    padding: 1rem !important;
+    font-style: italic;
+}
+
+.lb-empty {
+    text-align: center !important;
+    color: var(--text-muted) !important;
+    padding: 1rem !important;
+}
+
+/* Start button */
+.pregame-start-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    border: none;
+    border-radius: var(--border-radius-md);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 20px hsla(190, 90%, 50%, 0.25);
+    animation: pregamePulse 2.5s ease-in-out infinite;
+}
+
+.pregame-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px hsla(190, 90%, 50%, 0.4);
+    animation: none;
+}
+
+.pregame-start-btn:active {
+    transform: translateY(0);
+}
+
+@keyframes pregamePulse {
+    0%, 100% { box-shadow: 0 4px 20px hsla(190, 90%, 50%, 0.25); }
+    50%       { box-shadow: 0 4px 32px hsla(190, 90%, 50%, 0.5), 0 0 0 4px hsla(190, 90%, 50%, 0.08); }
 }

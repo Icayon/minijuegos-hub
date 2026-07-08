@@ -12,7 +12,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style.css?v=1.0.3">
+    <link rel="stylesheet" href="style.css?v=1.0.4">
 </head>
 <body>
     <!-- Background Glows -->
@@ -301,6 +301,27 @@
                  <div class="game-layout">
                      <!-- Main Play Zone -->
                      <div class="game-play-area">
+                         <!-- Pre-game overlay -->
+                         <div id="reaction-pregame" class="pregame-overlay">
+                             <div class="pregame-card">
+                                 <div class="pregame-title-row">
+                                     <i class="fa-solid fa-bolt pregame-icon" style="color:var(--accent-yellow)"></i>
+                                     <div>
+                                         <h2 class="pregame-title">Reflejos Rápidos</h2>
+                                         <p class="pregame-subtitle">Reacciona al color verde lo antes posible</p>
+                                     </div>
+                                 </div>
+                                 <div class="pregame-body">
+                                     <div class="pregame-leaderboard-wrap">
+                                         <span class="pregame-lb-title"><i class="fa-solid fa-trophy"></i> Top 10 Global</span>
+                                         <table class="pregame-lb-table"><tbody id="reaction-pregame-lb"><tr><td colspan="3" class="lb-loading">Cargando...</td></tr></tbody></table>
+                                     </div>
+                                     <button id="reaction-start-btn" class="pregame-start-btn">
+                                         <i class="fa-solid fa-play"></i> Iniciar
+                                     </button>
+                                 </div>
+                             </div>
+                         </div>
                          <div id="reaction-screen" class="reaction-screen state-waiting">
                              <div class="screen-content">
                                  <i id="reaction-icon" class="fa-solid fa-circle-play screen-icon"></i>
@@ -341,6 +362,32 @@
                 <div class="game-layout">
                     <!-- Main Play Zone (SVG Canvas) -->
                     <div class="game-play-area">
+                        <!-- Pre-game overlay -->
+                        <div id="untangle-pregame" class="pregame-overlay">
+                            <div class="pregame-card">
+                                <div class="pregame-title-row">
+                                    <i class="fa-solid fa-circle-nodes pregame-icon" style="color:var(--accent-purple)"></i>
+                                    <div>
+                                        <h2 class="pregame-title">Desenredar Nodos</h2>
+                                        <p class="pregame-subtitle">Mueve los nodos hasta eliminar todos los cruces</p>
+                                    </div>
+                                </div>
+                                <div class="pregame-body">
+                                    <div class="pregame-diff-row">
+                                        <button class="pregame-diff-btn active" data-game="untangle" data-diff="facil">Fácil</button>
+                                        <button class="pregame-diff-btn" data-game="untangle" data-diff="medio">Medio</button>
+                                        <button class="pregame-diff-btn" data-game="untangle" data-diff="realista">Realista</button>
+                                    </div>
+                                    <div class="pregame-leaderboard-wrap">
+                                        <span class="pregame-lb-title"><i class="fa-solid fa-trophy"></i> Top 10 Global — <span id="untangle-pregame-diff-label">Fácil</span></span>
+                                        <table class="pregame-lb-table"><tbody id="untangle-pregame-lb"><tr><td colspan="3" class="lb-loading">Cargando...</td></tr></tbody></table>
+                                    </div>
+                                    <button id="untangle-start-btn" class="pregame-start-btn">
+                                        <i class="fa-solid fa-play"></i> Iniciar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="untangle-status-bar">
                             <span class="status-indicator"><i class="fa-solid fa-gamepad text-purple"></i> Modo: <strong id="untangle-mode-label">Fácil</strong></span>
                             <span id="untangle-rounds-indicator" class="status-indicator hidden"><i class="fa-solid fa-layer-group text-green"></i> Ronda: <strong id="untangle-round-val">1/3</strong></span>
@@ -433,6 +480,32 @@
                 <div class="game-layout">
                     <!-- Main Play Zone (Fingerprint interface) -->
                     <div class="game-play-area">
+                        <!-- Pre-game overlay -->
+                        <div id="printlock-pregame" class="pregame-overlay">
+                            <div class="pregame-card">
+                                <div class="pregame-title-row">
+                                    <i class="fa-solid fa-fingerprint pregame-icon" style="color:var(--accent-green)"></i>
+                                    <div>
+                                        <h2 class="pregame-title">Pirateo de Huella</h2>
+                                        <p class="pregame-subtitle">Alinea los fragmentos hasta descifrar la huella</p>
+                                    </div>
+                                </div>
+                                <div class="pregame-body">
+                                    <div class="pregame-diff-row">
+                                        <button class="pregame-diff-btn active" data-game="printlock" data-diff="facil">Fácil</button>
+                                        <button class="pregame-diff-btn" data-game="printlock" data-diff="medio">Medio</button>
+                                        <button class="pregame-diff-btn" data-game="printlock" data-diff="realista">Realista</button>
+                                    </div>
+                                    <div class="pregame-leaderboard-wrap">
+                                        <span class="pregame-lb-title"><i class="fa-solid fa-trophy"></i> Top 10 Global — <span id="printlock-pregame-diff-label">Fácil</span></span>
+                                        <table class="pregame-lb-table"><tbody id="printlock-pregame-lb"><tr><td colspan="3" class="lb-loading">Cargando...</td></tr></tbody></table>
+                                    </div>
+                                    <button id="printlock-start-btn" class="pregame-start-btn">
+                                        <i class="fa-solid fa-play"></i> Iniciar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="printlock-status-bar">
                             <span class="status-indicator"><i class="fa-solid fa-shield-halved text-red" id="printlock-status-icon"></i> Status: <strong id="printlock-status-label" class="text-red">SISTEMA BLOQUEADO</strong></span>
                             <span class="status-indicator"><i class="fa-solid fa-clock text-cyan"></i> Tiempo: <strong id="printlock-timer">0.0s</strong></span>
@@ -521,6 +594,32 @@
                 <div class="game-layout">
                     <!-- Main Play Zone (SVG Canvas) -->
                     <div class="game-play-area">
+                        <!-- Pre-game overlay -->
+                        <div id="pathfind-pregame" class="pregame-overlay">
+                            <div class="pregame-card">
+                                <div class="pregame-title-row">
+                                    <i class="fa-solid fa-route pregame-icon" style="color:var(--accent-cyan)"></i>
+                                    <div>
+                                        <h2 class="pregame-title">Conector de Puntos</h2>
+                                        <p class="pregame-subtitle">Conecta los nodos en orden de distancia mínima</p>
+                                    </div>
+                                </div>
+                                <div class="pregame-body">
+                                    <div class="pregame-diff-row">
+                                        <button class="pregame-diff-btn active" data-game="pathfind" data-diff="facil">Fácil</button>
+                                        <button class="pregame-diff-btn" data-game="pathfind" data-diff="medio">Medio</button>
+                                        <button class="pregame-diff-btn" data-game="pathfind" data-diff="realista">Realista</button>
+                                    </div>
+                                    <div class="pregame-leaderboard-wrap">
+                                        <span class="pregame-lb-title"><i class="fa-solid fa-trophy"></i> Top 10 Global — <span id="pathfind-pregame-diff-label">Fácil</span></span>
+                                        <table class="pregame-lb-table"><tbody id="pathfind-pregame-lb"><tr><td colspan="3" class="lb-loading">Cargando...</td></tr></tbody></table>
+                                    </div>
+                                    <button id="pathfind-start-btn" class="pregame-start-btn">
+                                        <i class="fa-solid fa-play"></i> Iniciar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="pathfind-status-bar">
                             <span class="status-indicator"><i class="fa-solid fa-shield-halved text-purple"></i> Modo: <strong id="pathfind-mode-label" class="text-purple">Fácil</strong></span>
                             <span id="pathfind-rounds-indicator" class="status-indicator hidden"><i class="fa-solid fa-layer-group text-green"></i> Ronda: <strong id="pathfind-round-val">1/3</strong></span>
@@ -610,6 +709,6 @@
     </div>
 
     <!-- Main JavaScript -->
-    <script src="app.js?v=1.0.3"></script>
+    <script src="app.js?v=1.0.4"></script>
 </body>
 </html>

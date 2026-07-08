@@ -647,29 +647,134 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDashboardUI();
         } else if (viewToShow === 'reaction') {
             elGameReactionView.classList.add('active-view');
-            resetReactionGame();
+            showPregameOverlay('reaction');
         } else if (viewToShow === 'untangle') {
             elGameUntangleView.classList.add('active-view');
             state.untangleGame.currentMode = 'facil';
             updateModeButtonsUI();
             state.untangleGame.realisticRoundsCleared = 0;
             state.untangleGame.realisticTimes = [];
-            initUntangleGame();
+            showPregameOverlay('untangle');
         } else if (viewToShow === 'printlock') {
             elGamePrintLockView.classList.add('active-view');
             state.printlockGame.currentMode = 'facil';
             updatePrintLockModeButtonsUI();
             state.printlockGame.realisticRoundsCleared = 0;
             state.printlockGame.realisticTimes = [];
-            initPrintLockGame();
+            showPregameOverlay('printlock');
         } else if (viewToShow === 'pathfind') {
             elGamePathFindView.classList.add('active-view');
             state.pathfindGame.currentMode = 'facil';
             updatePathFindModeButtonsUI();
             state.pathfindGame.realisticRoundsCleared = 0;
             state.pathfindGame.realisticTimes = [];
-            initPathFindGame();
+            showPregameOverlay('pathfind');
         }
+    }
+
+    // --- Pre-Game Overlay Logic ---
+
+    // Maps game keys to Firebase leaderboard keys
+    const PREGAME_LB_KEY = {
+        reaction:  { reaction: 'reaction' },
+        untangle:  { facil: 'untangle_facil', medio: 'untangle_medio', realista: 'untangle_realista' },
+        printlock: { facil: 'printlock_facil', medio: 'printlock_medio', realista: 'printlock_realista' },
+        pathfind:  { facil: 'pathfind_facil',  medio: 'pathfind_medio',  realista: 'pathfind_realista' }
+    };
+
+    const DIFF_LABELS = { facil: 'Fácil', medio: 'Medio', realista: 'Realista' };
+
+    function fetchPregameLeaderboard(firebaseKey, tbodyEl, isReaction) {
+        tbodyEl.innerHTML = '<tr><td colspan="3" class="lb-loading">Cargando...</td></tr>';
+        const url = `${FIREBASE_URL}/leaderboard/${firebaseKey}.json?orderBy="score"&limitToFirst=10`;
+        fetch(url)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                let entries = [];
+                if (data && typeof data === 'object') {
+                    entries = Object.values(data).sort((a, b) => a.score - b.score).slice(0, 10);
+                }
+                if (entries.length === 0) {
+                    tbodyEl.innerHTML = '<tr><td colspan="3" class="lb-empty">¡Sé el primero en el ranking!</td></tr>';
+                    return;
+                }
+                const medals = ['🥇', '🥈', '🥉'];
+                tbodyEl.innerHTML = entries.map((e, i) => {
+                    const pos = i < 3 ? medals[i] : `#${i + 1}`;
+                    const sc  = isReaction ? `${Math.round(e.score)} ms` : `${e.score.toFixed(1)} s`;
+                    return `<tr><td>${pos}</td><td>${e.name}</td><td>${sc}</td></tr>`;
+                }).join('');
+            })
+            .catch(() => {
+                tbodyEl.innerHTML = '<tr><td colspan="3" class="lb-empty">Sin conexión</td></tr>';
+            });
+    }
+
+    function showPregameOverlay(game) {
+        const overlay = document.getElementById(`${game}-pregame`);
+        if (!overlay) return;
+        overlay.classList.remove('hidden', 'hiding');
+
+        if (game === 'reaction') {
+            fetchPregameLeaderboard('reaction', document.getElementById('reaction-pregame-lb'), true);
+            document.getElementById('reaction-start-btn').onclick = () => hidePregameOverlay(game, () => resetReactionGame());
+        } else {
+            // Initialize pregame diff buttons for multi-difficulty games
+            const diffBtns = overlay.querySelectorAll('.pregame-diff-btn');
+            const lbBody   = document.getElementById(`${game}-pregame-lb`);
+            const diffLabel = document.getElementById(`${game}-pregame-diff-label`);
+            let activeDiff  = 'facil';
+
+            const loadForDiff = (diff) => {
+                activeDiff = diff;
+                if (diffLabel) diffLabel.textContent = DIFF_LABELS[diff];
+                fetchPregameLeaderboard(PREGAME_LB_KEY[game][diff], lbBody, false);
+            };
+
+            diffBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.diff === 'facil');
+                btn.onclick = () => {
+                    diffBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    // Sync game mode selectors
+                    const modeMap = { facil: 0, medio: 1, realista: 2 };
+                    const modeKeys = ['facil', 'medio', 'realista'];
+                    const diff = btn.dataset.diff;
+                    if (game === 'untangle') {
+                        state.untangleGame.currentMode = diff;
+                        updateModeButtonsUI();
+                    } else if (game === 'printlock') {
+                        state.printlockGame.currentMode = diff;
+                        updatePrintLockModeButtonsUI();
+                    } else if (game === 'pathfind') {
+                        state.pathfindGame.currentMode = diff;
+                        updatePathFindModeButtonsUI();
+                    }
+                    loadForDiff(diff);
+                };
+            });
+
+            loadForDiff('facil');
+
+            document.getElementById(`${game}-start-btn`).onclick = () => {
+                hidePregameOverlay(game, () => {
+                    if (game === 'untangle') initUntangleGame();
+                    else if (game === 'printlock') initPrintLockGame();
+                    else if (game === 'pathfind') initPathFindGame();
+                });
+            };
+        }
+    }
+
+    function hidePregameOverlay(game, callback) {
+        const overlay = document.getElementById(`${game}-pregame`);
+        if (!overlay) { if (callback) callback(); return; }
+        overlay.classList.add('hiding');
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('hiding');
+            if (callback) callback();
+        }, 260);
     }
 
     // --- Onboarding / Name Saving ---
