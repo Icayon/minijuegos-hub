@@ -2,10 +2,8 @@
  * ArcadeHub - Main Application & Game Manager
  */
 
-// --- GitHub Leaderboard Configuration ---
-// Configure this to match your GitHub Username and Repository name (e.g., 'username/repo')
-const GITHUB_REPO = 'kaosd/minijuegos-hub'; 
-const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/leaderboard.json`;
+// --- Firebase Realtime Database Configuration ---
+const FIREBASE_URL = 'https://minigames-5c4ef-default-rtdb.firebaseio.com';
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Application State ---
@@ -447,21 +445,33 @@ document.addEventListener('DOMContentLoaded', () => {
             elLeaderboardTableBody.innerHTML = '';
         }
 
-        const cacheBusterUrl = `${GITHUB_RAW_URL}?t=${Date.now()}`;
+        const gameKey = elLeaderboardGameSelector.value;
+        const url = `${FIREBASE_URL}/leaderboard/${gameKey}.json?orderBy="score"&limitToFirst=10`;
 
-        fetch(cacheBusterUrl)
+        fetch(url)
             .then(res => {
-                if (!res.ok) throw new Error("Leaderboard file not found");
+                if (!res.ok) throw new Error('Firebase fetch failed');
                 return res.json();
             })
             .then(data => {
-                state.leaderboard.data = data;
+                // Firebase returns an object with auto-generated keys — convert to sorted array
+                let entries = [];
+                if (data && typeof data === 'object') {
+                    entries = Object.values(data);
+                    entries.sort((a, b) => a.score - b.score);
+                    entries = entries.slice(0, 10);
+                }
+
+                // Store normalized data
+                if (!state.leaderboard.data) state.leaderboard.data = {};
+                state.leaderboard.data[gameKey] = entries;
+
                 elLeaderboardLoadingMsg.classList.add('hidden');
                 elLeaderboardErrorMsg.classList.add('hidden');
                 renderLeaderboardTable();
             })
             .catch(err => {
-                console.warn("Leaderboard fetch failed", err);
+                console.warn('Leaderboard fetch failed', err);
                 if (!isBackground) {
                     elLeaderboardLoadingMsg.classList.add('hidden');
                     elLeaderboardErrorMsg.classList.remove('hidden');
@@ -489,23 +499,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 scoreFormatted = `${Math.round(item.score)} ms`;
             }
 
+            const medals = ['🥇', '🥈', '🥉'];
+            const medalOrNum = index < 3 ? medals[index] : `#${index + 1}`;
+
             tr.innerHTML = `
-                <td style="font-weight: 800; color: ${index === 0 ? 'var(--accent-purple)' : index === 1 ? 'var(--accent-cyan)' : 'var(--text-muted)'};">#${index + 1}</td>
+                <td style="font-weight: 800; color: ${index === 0 ? 'var(--accent-yellow)' : index === 1 ? 'var(--text-secondary)' : index === 2 ? 'hsl(30,80%,55%)' : 'var(--text-muted)'}; font-size: ${index < 3 ? '1.1rem' : '0.9rem'}">${medalOrNum}</td>
                 <td style="font-weight: 600; color: var(--text-primary);">${item.name}</td>
-                <td style="text-align: right; font-family: 'Outfit', sans-serif; font-weight: 700;">${scoreFormatted}</td>
+                <td style="text-align: right; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--accent-cyan);">${scoreFormatted}</td>
             `;
             elLeaderboardTableBody.appendChild(tr);
         });
     }
 
     function startLeaderboardPolling() {
+        // Invalidate cached data so next fetch pulls fresh from Firebase
+        if (state.leaderboard.data) {
+            delete state.leaderboard.data[elLeaderboardGameSelector.value];
+        }
         fetchLeaderboard(false);
         if (state.leaderboard.pollingIntervalId) {
             clearInterval(state.leaderboard.pollingIntervalId);
         }
         state.leaderboard.pollingIntervalId = setInterval(() => {
             fetchLeaderboard(true);
-        }, 10000); 
+        }, 10000);
     }
 
     function stopLeaderboardPolling() {
@@ -515,17 +532,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function submitScoreToGitHub(gameKey, scoreValue) {
+    function submitScoreToFirebase(gameKey, scoreValue) {
         const player = state.player.name;
-        const verifHash = getChecksum(gameKey, player, scoreValue);
+        const entry = {
+            name: player,
+            score: scoreValue,
+            date: new Date().toISOString().split('T')[0]
+        };
 
-        const title = `[Score] Nuevo récord de ${player} en ${gameKey}`;
-        const body = `GAME: ${gameKey}\nPLAYER: ${player}\nSCORE: ${scoreValue}\nVERIFICATION: ${verifHash}`;
+        const url = `${FIREBASE_URL}/leaderboard/${gameKey}.json`;
 
-        const issueUrl = `https://github.com/${GITHUB_REPO}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
-
-        window.open(issueUrl, '_blank');
-        alert("Te hemos redirigido a GitHub. Por favor, pulsa el botón verde 'Submit new issue' para subir tu puntuación. El bot de GitHub la validará y añadirá a la tabla global en pocos segundos.");
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entry)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Firebase write failed');
+            return res.json();
+        })
+        .then(() => {
+            // Refresh global tab immediately after submitting
+            if (state.leaderboard.data) delete state.leaderboard.data[gameKey];
+            fetchLeaderboard(true);
+        })
+        .catch(err => {
+            console.warn('Score upload failed:', err);
+            alert('Error al subir la puntuación. Comprueba tu conexión e inténtalo de nuevo.');
+        });
     }
 
     // --- Navigation ---
@@ -670,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 elReactionUploadBtn.style.display = 'block';
                 elReactionUploadBtn.onclick = () => {
-                    submitScoreToGitHub('reaction', reactionTime);
+                    submitScoreToFirebase('reaction', reactionTime);
                     elReactionUploadBtn.style.display = 'none';
                 };
 
@@ -1119,7 +1153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elUntangleUploadBtn.style.display = 'block';
             elUntangleUploadBtn.onclick = () => {
-                submitScoreToGitHub('untangle_facil', elapsed);
+                submitScoreToFirebase('untangle_facil', elapsed);
                 elUntangleUploadBtn.style.display = 'none';
             };
             elUntangleWinOverlay.classList.remove('hidden');
@@ -1146,7 +1180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elUntangleUploadBtn.style.display = 'block';
             elUntangleUploadBtn.onclick = () => {
-                submitScoreToGitHub('untangle_medio', elapsed);
+                submitScoreToFirebase('untangle_medio', elapsed);
                 elUntangleUploadBtn.style.display = 'none';
             };
             elUntangleWinOverlay.classList.remove('hidden');
@@ -1192,7 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 elUntangleUploadBtn.style.display = 'block';
                 elUntangleUploadBtn.onclick = () => {
-                    submitScoreToGitHub('untangle_realista', totalAccumulatedTime);
+                    submitScoreToFirebase('untangle_realista', totalAccumulatedTime);
                     elUntangleUploadBtn.style.display = 'none';
                 };
                 
@@ -1504,7 +1538,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elPrintLockUploadBtn.style.display = 'block';
             elPrintLockUploadBtn.onclick = () => {
-                submitScoreToGitHub('printlock_facil', elapsed);
+                submitScoreToFirebase('printlock_facil', elapsed);
                 elPrintLockUploadBtn.style.display = 'none';
             };
             elPrintLockWinOverlay.classList.remove('hidden');
@@ -1531,7 +1565,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elPrintLockUploadBtn.style.display = 'block';
             elPrintLockUploadBtn.onclick = () => {
-                submitScoreToGitHub('printlock_medio', elapsed);
+                submitScoreToFirebase('printlock_medio', elapsed);
                 elPrintLockUploadBtn.style.display = 'none';
             };
             elPrintLockWinOverlay.classList.remove('hidden');
@@ -1577,7 +1611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 elPrintLockUploadBtn.style.display = 'block';
                 elPrintLockUploadBtn.onclick = () => {
-                    submitScoreToGitHub('printlock_realista', totalAccumulatedTime);
+                    submitScoreToFirebase('printlock_realista', totalAccumulatedTime);
                     elPrintLockUploadBtn.style.display = 'none';
                 };
                 
@@ -1923,7 +1957,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elPathFindUploadBtn.style.display = 'block';
             elPathFindUploadBtn.onclick = () => {
-                submitScoreToGitHub('pathfind_facil', elapsed);
+                submitScoreToFirebase('pathfind_facil', elapsed);
                 elPathFindUploadBtn.style.display = 'none';
             };
             elPathFindWinOverlay.classList.remove('hidden');
@@ -1950,7 +1984,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elPathFindUploadBtn.style.display = 'block';
             elPathFindUploadBtn.onclick = () => {
-                submitScoreToGitHub('pathfind_medio', elapsed);
+                submitScoreToFirebase('pathfind_medio', elapsed);
                 elPathFindUploadBtn.style.display = 'none';
             };
             elPathFindWinOverlay.classList.remove('hidden');
@@ -1986,7 +2020,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 elPathFindUploadBtn.style.display = 'block';
                 elPathFindUploadBtn.onclick = () => {
-                    submitScoreToGitHub('pathfind_realista', totalAccumulatedTime);
+                    submitScoreToFirebase('pathfind_realista', totalAccumulatedTime);
                     elPathFindUploadBtn.style.display = 'none';
                 };
                 
