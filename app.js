@@ -387,100 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Global Live Leaderboard Operations ---
-    function fetchLeaderboard(isBackground = false) {
-        if (!isBackground) {
-            elLeaderboardLoadingMsg.classList.remove('hidden');
-            elLeaderboardErrorMsg.classList.add('hidden');
-            elLeaderboardTableBody.innerHTML = '';
-        }
-
-        const gameKey = elLeaderboardGameSelector.value;
-        const url = `${FIREBASE_URL}/leaderboard/${gameKey}.json`;
-
-        fetch(url)
-            .then(res => {
-                if (!res.ok) throw new Error('Firebase fetch failed');
-                return res.json();
-            })
-            .then(data => {
-                // Firebase returns an object with auto-generated keys — convert to sorted array
-                let entries = [];
-                if (data && typeof data === 'object') {
-                    entries = Object.values(data);
-                    entries.sort((a, b) => a.score - b.score);
-                    entries = entries.slice(0, 10);
-                }
-
-                // Store normalized data
-                if (!state.leaderboard.data) state.leaderboard.data = {};
-                state.leaderboard.data[gameKey] = entries;
-
-                elLeaderboardLoadingMsg.classList.add('hidden');
-                elLeaderboardErrorMsg.classList.add('hidden');
-                renderLeaderboardTable();
-            })
-            .catch(err => {
-                console.warn('Leaderboard fetch failed', err);
-                if (!isBackground) {
-                    elLeaderboardLoadingMsg.classList.add('hidden');
-                    elLeaderboardErrorMsg.classList.remove('hidden');
-                    elLeaderboardTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Error de conexión.</td></tr>';
-                }
-            });
-    }
-
-    function renderLeaderboardTable() {
-        const gameKey = elLeaderboardGameSelector.value;
-        const list = (state.leaderboard.data && state.leaderboard.data[gameKey]) || [];
-        
-        elLeaderboardTableBody.innerHTML = '';
-
-        if (list.length === 0) {
-            elLeaderboardTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-muted); padding: 1.5rem 0;">Aún sin récords.</td></tr>';
-            return;
-        }
-
-        list.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            
-            let scoreFormatted = `${item.score.toFixed(1)} s`;
-            if (gameKey === 'reaction') {
-                scoreFormatted = `${Math.round(item.score)} ms`;
-            }
-
-            const medals = ['🥇', '🥈', '🥉'];
-            const medalOrNum = index < 3 ? medals[index] : `#${index + 1}`;
-
-            tr.innerHTML = `
-                <td style="font-weight: 800; color: ${index === 0 ? 'var(--accent-yellow)' : index === 1 ? 'var(--text-secondary)' : index === 2 ? 'hsl(30,80%,55%)' : 'var(--text-muted)'}; font-size: ${index < 3 ? '1.1rem' : '0.9rem'}">${medalOrNum}</td>
-                <td style="font-weight: 600; color: var(--text-primary);">${item.name}</td>
-                <td style="text-align: right; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--accent-cyan);">${scoreFormatted}</td>
-            `;
-            elLeaderboardTableBody.appendChild(tr);
-        });
-    }
-
-    function startLeaderboardPolling() {
-        // Invalidate cached data so next fetch pulls fresh from Firebase
-        if (state.leaderboard.data) {
-            delete state.leaderboard.data[elLeaderboardGameSelector.value];
-        }
-        fetchLeaderboard(false);
-        if (state.leaderboard.pollingIntervalId) {
-            clearInterval(state.leaderboard.pollingIntervalId);
-        }
-        state.leaderboard.pollingIntervalId = setInterval(() => {
-            fetchLeaderboard(true);
-        }, 10000);
-    }
-
-    function stopLeaderboardPolling() {
-        if (state.leaderboard.pollingIntervalId) {
-            clearInterval(state.leaderboard.pollingIntervalId);
-            state.leaderboard.pollingIntervalId = null;
-        }
-    }
-
     function submitScoreToFirebase(gameKey, scoreValue) {
         const player = state.player.name;
         const listUrl = `${FIREBASE_URL}/leaderboard/${gameKey}.json`;
@@ -547,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         showToast(msg, 'success');
                         // Refresh leaderboard immediately
                         if (state.leaderboard.data) delete state.leaderboard.data[gameKey];
-                        fetchLeaderboard(true);
+                        loadHomeLb(); loadFullLeaderboard();
                         // Refresh side lb for current game
                         if (gameKey === 'reaction') loadSideLeaderboard('reaction', true, 'reaction-side-lb');
                         else if (gameKey === 'untangle_realista') loadSideLeaderboard('untangle_realista', false, 'untangle-side-lb');
