@@ -640,14 +640,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Full Leaderboard Page ──────────────────────────────────────────────────
     const LB_CATEGORIES = [
         { key: 'reaction',          label: 'Reflejos Rápidos',    sub: '',         icon: '⚡', isReaction: true  },
-        { key: 'untangle_facil',    label: 'Desenredar Nodos',    sub: 'Fácil',    icon: '🟣', isReaction: false },
-        { key: 'untangle_medio',    label: 'Desenredar Nodos',    sub: 'Medio',    icon: '🟣', isReaction: false },
         { key: 'untangle_realista', label: 'Desenredar Nodos',    sub: 'Realista', icon: '🟣', isReaction: false },
-        { key: 'printlock_facil',   label: 'Pirateo de Huella',   sub: 'Fácil',    icon: '🟢', isReaction: false },
-        { key: 'printlock_medio',   label: 'Pirateo de Huella',   sub: 'Medio',    icon: '🟢', isReaction: false },
         { key: 'printlock_realista',label: 'Pirateo de Huella',   sub: 'Realista', icon: '🟢', isReaction: false },
-        { key: 'pathfind_facil',    label: 'Conector de Puntos',  sub: 'Fácil',    icon: '🟡', isReaction: false },
-        { key: 'pathfind_medio',    label: 'Conector de Puntos',  sub: 'Medio',    icon: '🟡', isReaction: false },
         { key: 'pathfind_realista', label: 'Conector de Puntos',  sub: 'Realista', icon: '🟡', isReaction: false },
     ];
 
@@ -860,7 +854,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const loadForDiff = (diff) => {
                 activeDiff = diff;
                 if (diffLabel) diffLabel.textContent = DIFF_LABELS[diff];
-                fetchPregameLeaderboard(PREGAME_LB_KEY[game][diff], lbBody, false);
+                if (diff === 'realista') {
+                    fetchPregameLeaderboard(PREGAME_LB_KEY[game][diff], lbBody, false);
+                } else {
+                    lbBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);font-style:italic;padding:1.5rem;">Modo Práctica (No registra ranking global)</td></tr>';
+                }
             };
 
             diffBtns.forEach(btn => {
@@ -1442,7 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            if (isNewBest) submitScoreToFirebase('untangle_facil', elapsed);
+            // if (isNewBest) submitScoreToFirebase('untangle_facil', elapsed); (Practice mode)
             elUntangleWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'medio') {
@@ -1465,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            if (isNewBest) submitScoreToFirebase('untangle_medio', elapsed);
+            // if (isNewBest) submitScoreToFirebase('untangle_medio', elapsed); (Practice mode)
             elUntangleWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'realista') {
@@ -1814,7 +1812,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            if (isNewBest) submitScoreToFirebase('printlock_facil', elapsed);
+            // if (isNewBest) submitScoreToFirebase('printlock_facil', elapsed); (Practice mode)
             elPrintLockWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'medio') {
@@ -1837,7 +1835,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            if (isNewBest) submitScoreToFirebase('printlock_medio', elapsed);
+            // if (isNewBest) submitScoreToFirebase('printlock_medio', elapsed); (Practice mode)
             elPrintLockWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'realista') {
@@ -2220,7 +2218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            if (isNewBest) submitScoreToFirebase('pathfind_facil', elapsed);
+            // if (isNewBest) submitScoreToFirebase('pathfind_facil', elapsed); (Practice mode)
             elPathFindWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'medio') {
@@ -2243,7 +2241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Jugar de Nuevo <i class="fa-solid fa-rotate"></i>'
             );
 
-            if (isNewBest) submitScoreToFirebase('pathfind_medio', elapsed);
+            // if (isNewBest) submitScoreToFirebase('pathfind_medio', elapsed); (Practice mode)
             elPathFindWinOverlay.classList.remove('hidden');
 
         } else if (game.currentMode === 'realista') {
