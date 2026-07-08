@@ -787,7 +787,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 let entries = [];
                 if (data && typeof data === 'object') {
-                    entries = Object.values(data).sort((a, b) => a.score - b.score).slice(0, 10);
+                    entries = Object.values(data).filter(e => {
+                        return e && e.hash === getChecksum(firebaseKey, e.name, e.score);
+                    }).sort((a, b) => a.score - b.score).slice(0, 10);
                 }
                 if (entries.length === 0) {
                     tbodyEl.innerHTML = '<tr><td colspan="3" class="lb-empty">¡Sé el primero en el ranking!</td></tr>';
