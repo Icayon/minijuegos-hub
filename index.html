@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minijuegos Arcade - Practica y Diviértete</title>
+    <meta name="description" content="Una colección de minijuegos web responsivos y rápidos para entrenar tus reflejos, memoria y lógica de forma interactiva y moderna.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Oxanium:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css?v=1.0.1">
+</head>
+<body>
+    <!-- Background Glows -->
+    <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+
+    <div class="app-container">
+        <!-- Sidebar / Dashboard Panel -->
+        <aside class="sidebar-panel">
+            <div class="brand">
+                <i class="fa-solid fa-gamepad brand-icon"></i>
+                <h2 class="brand-title">ArcadeHub</h2>
+            </div>
+
+            <!-- Player Profile Card -->
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <div class="avatar">
+                        <i class="fa-solid fa-user-ninja"></i>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name-row">
+                        <span id="player-name" class="player-name">Jugador 1</span>
+                        <button id="edit-name-btn" class="edit-btn" aria-label="Editar nombre del jugador"><i class="fa-solid fa-pen"></i></button>
+                    </div>
+                    <span class="player-title">Entrenador Novato</span>
+                </div>
+            </div>
+
+            <!-- Global Stats -->
+            <div class="stats-section">
+                <div class="stats-tabs">
+                    <button class="stats-tab-btn active" id="tab-my-records-btn">Mis Récords</button>
+                    <button class="stats-tab-btn" id="tab-global-records-btn">Global (Live)</button>
+                </div>
+                
+                <!-- Personal records panel -->
+                <div id="panel-my-records" class="stats-panel-content">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Partidas Jugadas</span>
+                            <span id="stat-total-games" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Récord Reflejos</span>
+                            <span id="stat-best-reaction" class="stat-value">-- ms</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Récord Fácil</span>
+                            <span id="stat-best-untangle-facil" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Récord Medio</span>
+                            <span id="stat-best-untangle-medio" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Récord Realista</span>
+                            <span id="stat-best-untangle-realista" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Scan Fácil</span>
+                            <span id="stat-best-printlock-facil" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Scan Medio</span>
+                            <span id="stat-best-printlock-medio" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Scan Realista</span>
+                            <span id="stat-best-printlock-realista" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Camino Fácil</span>
+                            <span id="stat-best-pathfind-facil" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Camino Medio</span>
+                            <span id="stat-best-pathfind-medio" class="stat-value">-- s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Camino Realista</span>
+                            <span id="stat-best-pathfind-realista" class="stat-value">-- s</span>
+                        </div>
+                    </div>
+                    <button id="reset-stats-btn" class="secondary-btn btn-full">
+                        <i class="fa-solid fa-rotate-left"></i> Reiniciar Datos
+                    </button>
+                </div>
+                
+                <!-- Global records panel -->
+                <div id="panel-global-records" class="stats-panel-content hidden">
+                    <div class="leaderboard-selector-row">
+                        <select id="leaderboard-game-selector" class="leaderboard-select">
+                            <option value="reaction">Reflejos Rápidos</option>
+                            <option value="untangle_facil">Desenredar: Fácil</option>
+                            <option value="untangle_medio">Desenredar: Medio</option>
+                            <option value="untangle_realista">Desenredar: Realista</option>
+                            <option value="printlock_facil">PrintLock: Fácil</option>
+                            <option value="printlock_medio">PrintLock: Medio</option>
+                            <option value="printlock_realista">PrintLock: Realista</option>
+                            <option value="pathfind_facil">PathFind: Fácil</option>
+                            <option value="pathfind_medio">PathFind: Medio</option>
+                            <option value="pathfind_realista">PathFind: Realista</option>
+                        </select>
+                    </div>
+                    <div class="global-records-list-wrapper">
+                        <table class="leaderboard-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jugador</th>
+                                    <th>Tiempo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-table-body">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                        <div id="leaderboard-loading-msg" class="leaderboard-status-msg hidden">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Cargando marcas...
+                        </div>
+                        <div id="leaderboard-error-msg" class="leaderboard-status-msg hidden">
+                            <i class="fa-solid fa-triangle-exclamation text-yellow"></i> No conectado a GitHub
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggest Game Form -->
+            <div class="suggest-box">
+                <h4>¿Qué juego añadimos?</h4>
+                <p>Propón el siguiente minijuego que quieres que desarrollemos.</p>
+                <form id="suggest-form">
+                    <input type="text" id="suggest-input" placeholder="Ej. Simon Says, Sudoku..." required aria-label="Nombre del juego propuesto">
+                    <button type="submit" id="suggest-submit-btn" class="primary-btn btn-sm">Enviar</button>
+                </form>
+                <p id="suggest-feedback" class="suggest-feedback hidden">¡Propuesta guardada! 🚀</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Hub View -->
+            <section id="hub-view" class="view active-view">
+                <header class="hub-header">
+                    <h1 class="main-heading">Entrena tus habilidades</h1>
+                    <p class="sub-heading">Selecciona uno de nuestros minijuegos para poner a prueba tu velocidad mental, concentración y precisión.</p>
+                </header>
+
+                <!-- Grid of Games -->
+                <div class="games-grid">
+                    <!-- Game 1: Reaction Time (Active) -->
+                    <article class="game-card active-card" id="card-reaction">
+                        <div class="game-badge active-badge">JUGAR AHORA</div>
+                        <div class="game-card-content">
+                            <div class="game-icon-container reaction-theme">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <h3 class="game-title">Reflejos Rápidos</h3>
+                            <p class="game-description">Mide tu tiempo de reacción en milisegundos. ¿Serás más rápido que un rayo?</p>
+                             <div class="game-meta">
+                                 <span class="difficulty easy"><i class="fa-solid fa-circle"></i> Fácil</span>
+                                 <span class="play-stat"><i class="fa-solid fa-trophy"></i> Récord: <strong id="card-reaction-record">-- ms</strong></span>
+                             </div>
+                            <button id="play-reaction-btn" class="play-button" aria-label="Jugar a Reflejos Rápidos">
+                                Empezar <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Game 2: Untangle Game (Active) -->
+                    <article class="game-card active-card" id="card-untangle">
+                        <div class="game-badge active-badge">JUGAR AHORA</div>
+                        <div class="game-card-content">
+                            <div class="game-icon-container untangle-theme">
+                                <i class="fa-solid fa-diagram-project"></i>
+                            </div>
+                            <h3 class="game-title">Desenredar Nodos</h3>
+                            <p class="game-description">Mueve los 12 nodos de la red para desenredar el anillo. Cada nodo está conectado a 2 cuerdas y no puede tener más.</p>
+                            <div class="game-meta" style="flex-direction: column; align-items: flex-start; gap: 0.35rem; width: 100%;">
+                                <span class="difficulty medium"><i class="fa-solid fa-circle"></i> Varios Modos</span>
+                                <span class="play-stat" style="font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; width: 100%;">
+                                    <span>Fácil: <strong id="card-untangle-record-facil">-- s</strong></span>
+                                    <span>Medio: <strong id="card-untangle-record-medio">-- s</strong></span>
+                                    <span>Realista: <strong id="card-untangle-record-realista">-- s</strong></span>
+                                </span>
+                            </div>
+                            <button id="play-untangle-btn" class="play-button" aria-label="Jugar a Desenredar Nodos">
+                                Empezar <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Game 4: PrintLock Game (Active) -->
+                    <article class="game-card active-card" id="card-printlock">
+                        <div class="game-badge active-badge">JUGAR AHORA</div>
+                        <div class="game-card-content">
+                            <div class="game-icon-container tictac-theme">
+                                <i class="fa-solid fa-fingerprint"></i>
+                            </div>
+                            <h3 class="game-title">Pirateo de Huella</h3>
+                            <p class="game-description">Alinea los fragmentos de la huella dactilar para piratear la terminal. Una sección fija te servirá de guía.</p>
+                            <div class="game-meta" style="flex-direction: column; align-items: flex-start; gap: 0.35rem; width: 100%;">
+                                <span class="difficulty medium"><i class="fa-solid fa-circle"></i> Varios Modos</span>
+                                <span class="play-stat" style="font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; width: 100%;">
+                                    <span>Fácil: <strong id="card-printlock-record-facil">-- s</strong></span>
+                                    <span>Medio: <strong id="card-printlock-record-medio">-- s</strong></span>
+                                    <span>Realista: <strong id="card-printlock-record-realista">-- s</strong></span>
+                                </span>
+                            </div>
+                            <button id="play-printlock-btn" class="play-button" aria-label="Jugar a Pirateo de Huella">
+                                Empezar <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Game 5: PathFind Game (Active) -->
+                    <article class="game-card active-card" id="card-pathfind">
+                        <div class="game-badge active-badge">JUGAR AHORA</div>
+                        <div class="game-card-content">
+                            <div class="game-icon-container pathfind-theme">
+                                <i class="fa-solid fa-route"></i>
+                            </div>
+                            <h3 class="game-title">Conectar Puntos (PathFind)</h3>
+                            <p class="game-description">Encuentra y conecta los puntos del mapa seleccionando siempre el más cercano en orden.</p>
+                            <div class="game-meta" style="flex-direction: column; align-items: flex-start; gap: 0.35rem; width: 100%;">
+                                <span class="difficulty easy"><i class="fa-solid fa-circle"></i> Varios Modos</span>
+                                <span class="play-stat" style="font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; width: 100%;">
+                                    <span>Fácil: <strong id="card-pathfind-record-facil">-- s</strong></span>
+                                    <span>Medio: <strong id="card-pathfind-record-medio">-- s</strong></span>
+                                    <span>Realista: <strong id="card-pathfind-record-realista">-- s</strong></span>
+                                </span>
+                            </div>
+                            <button id="play-pathfind-btn" class="play-button" aria-label="Jugar a Conectar Puntos">
+                                Empezar <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+             <!-- Game View: Reaction Time -->
+             <section id="game-reaction-view" class="view">
+                 <div class="game-view-header">
+                     <button id="back-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
+                     <h2><i class="fa-solid fa-bolt text-yellow"></i> Prueba de Reflejos Rápidos</h2>
+                 </div>
+
+                 <div class="game-layout">
+                     <!-- Main Play Zone -->
+                     <div class="game-play-area">
+                         <div id="reaction-screen" class="reaction-screen state-waiting">
+                             <div class="screen-content">
+                                 <i id="reaction-icon" class="fa-solid fa-circle-play screen-icon"></i>
+                                 <h3 id="reaction-instruction">Haz clic para comenzar</h3>
+                                 <p id="reaction-tip">Cuando la pantalla se vuelva VERDE, haz clic lo más rápido que puedas.</p>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Side Scoreboard for Game -->
+                     <div class="game-score-panel">
+                         <h3>Tus Intentos</h3>
+                         <p class="score-desc">Últimos intentos realizados en esta sesión:</p>
+                         <ul id="reaction-scores-list" class="scores-list">
+                             <li class="empty-list-msg">Aún no has realizado intentos.</li>
+                         </ul>
+                         <div class="best-score-display" style="margin-bottom: 0.75rem;">
+                             <i class="fa-solid fa-crown text-yellow"></i>
+                             <div>
+                                 <span class="best-label">Mejor Marca Personal</span>
+                                 <span id="reaction-best-value" class="best-val">-- ms</span>
+                             </div>
+                         </div>
+                         <button id="reaction-upload-btn" class="secondary-btn btn-full" style="display: none;">
+                             <i class="fa-brands fa-github"></i> Subir Récord a GitHub
+                         </button>
+                     </div>
+                 </div>
+             </section>
+
+            <!-- Game View: Untangle -->
+            <section id="game-untangle-view" class="view">
+                <div class="game-view-header">
+                    <button id="back-untangle-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
+                    <h2><i class="fa-solid fa-diagram-project text-purple"></i> Rompecabezas: Desenredar Nodos</h2>
+                </div>
+
+                <div class="game-layout">
+                    <!-- Main Play Zone (SVG Canvas) -->
+                    <div class="game-play-area">
+                        <div class="untangle-status-bar">
+                            <span class="status-indicator"><i class="fa-solid fa-gamepad text-purple"></i> Modo: <strong id="untangle-mode-label">Fácil</strong></span>
+                            <span id="untangle-rounds-indicator" class="status-indicator hidden"><i class="fa-solid fa-layer-group text-green"></i> Ronda: <strong id="untangle-round-val">1/3</strong></span>
+                            <span class="status-indicator"><i class="fa-solid fa-clock text-cyan"></i> Tiempo: <strong id="untangle-timer">0.0s</strong></span>
+                            <span class="status-indicator"><i class="fa-solid fa-diagram-project text-yellow"></i> Cruces: <strong id="untangle-intersections">0</strong></span>
+                        </div>
+                        <div class="untangle-canvas-container">
+                            <svg id="untangle-svg" viewBox="0 0 500 500" width="100%" height="100%">
+                                <!-- Rendered dynamically in app.js -->
+                            </svg>
+                            <!-- Win overlay screen -->
+                            <div id="untangle-win-overlay" class="win-overlay hidden">
+                                <div class="win-card">
+                                    <i class="fa-solid fa-circle-check win-icon text-green"></i>
+                                    <h3>¡Desenredado!</h3>
+                                    <p>Has acomodado los 12 nodos sin cruces de líneas.</p>
+                                    <button id="untangle-next-btn" class="primary-btn btn-full">Jugar de Nuevo <i class="fa-solid fa-rotate"></i></button>
+                                    <button id="untangle-upload-btn" class="secondary-btn btn-full" style="margin-top: 0.5rem; display: none;">
+                                        <i class="fa-brands fa-github"></i> Subir a Tabla Global
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side Scoreboard for Game -->
+                    <div class="game-score-panel">
+                        <h3>Controles y Reglas</h3>
+                        <p class="score-desc" id="untangle-rules-desc">Mueve los 12 nodos de la red para formar un anillo simple (polígono de 12 lados) sin que las cuerdas se crucen. Cada nodo tiene exactamente 2 cuerdas que lo unen a sus vecinos.</p>
+                        
+                        <!-- Mode Selector UI -->
+                        <div class="mode-selector-section">
+                            <span class="mode-selector-title">Dificultad y Modo:</span>
+                            <div class="mode-btn-group">
+                                <button id="mode-facil-btn" class="mode-btn active" aria-label="Modo Fácil">Fácil</button>
+                                <button id="mode-medio-btn" class="mode-btn" aria-label="Modo Medio">Medio</button>
+                                <button id="mode-realista-btn" class="mode-btn" aria-label="Modo Realista">Realista</button>
+                            </div>
+                        </div>
+
+                        <div style="flex-grow: 1;"></div>
+                        
+                        <button id="untangle-restart-btn" class="secondary-btn btn-full" style="margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-rotate"></i> Mezclar de nuevo
+                        </button>
+                        
+                        <!-- Mode Records Subpanel -->
+                        <div class="mode-records-panel">
+                            <h4>Mis Récords (Tiempos)</h4>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-green" style="font-size: 0.55rem;"></i> Fácil:</span>
+                                <strong id="untangle-best-facil-val" class="mode-record-value">-- s</strong>
+                            </div>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-yellow" style="font-size: 0.55rem;"></i> Medio:</span>
+                                <strong id="untangle-best-medio-val" class="mode-record-value">-- s</strong>
+                            </div>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-purple" style="font-size: 0.55rem;"></i> Realista:</span>
+                                <strong id="untangle-best-realista-val" class="mode-record-value">-- s</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game View: PrintLock -->
+            <section id="game-printlock-view" class="view">
+                <div class="game-view-header">
+                    <button id="back-printlock-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
+                </div>
+
+                <div class="printlock-brand-header">
+                    <div class="printlock-brand-text">
+                        <span class="brand-title">PRINT<span class="brand-accent">LOCK</span></span>
+                        <span class="brand-subtitle">Sift through the prints and find the matches.</span>
+                    </div>
+                    
+                    <div class="game-modes printlock-modes">
+                        <button id="printlock-mode-facil-btn" class="mode-btn active">Fácil</button>
+                        <button id="printlock-mode-medio-btn" class="mode-btn">Medio</button>
+                        <button id="printlock-mode-realista-btn" class="mode-btn">Realista</button>
+                    </div>
+
+                    <div class="printlock-brand-hexagon">
+                        <i class="fa-solid fa-circle-nodes"></i>
+                    </div>
+                </div>
+
+                <div class="game-layout">
+                    <!-- Main Play Zone (Fingerprint interface) -->
+                    <div class="game-play-area">
+                        <div class="printlock-status-bar">
+                            <span class="status-indicator"><i class="fa-solid fa-shield-halved text-red" id="printlock-status-icon"></i> Status: <strong id="printlock-status-label" class="text-red">SISTEMA BLOQUEADO</strong></span>
+                            <span class="status-indicator"><i class="fa-solid fa-clock text-cyan"></i> Tiempo: <strong id="printlock-timer">0.0s</strong></span>
+                        </div>
+                        
+                        <div class="printlock-scanner-box rows-4" id="printlock-scanner-box">
+                            <!-- Left Controls (populated dynamically in JS) -->
+                            <div class="printlock-ctrl-panel left"></div>
+                            
+                            <!-- Center Canvas -->
+                            <div class="printlock-canvas-container">
+                                <canvas id="printlock-canvas" width="400" height="400"></canvas>
+                                <!-- Win Overlay -->
+                                <div id="printlock-win-overlay" class="win-overlay hidden">
+                                    <div class="win-card">
+                                        <i class="fa-solid fa-circle-check win-icon text-green"></i>
+                                        <h3>¡Acceso Permitido!</h3>
+                                        <p>Firma digital obtenida correctamente.</p>
+                                        <button id="printlock-next-btn" class="primary-btn btn-full">Jugar de Nuevo <i class="fa-solid fa-rotate"></i></button>
+                                        <button id="printlock-upload-btn" class="secondary-btn btn-full" style="margin-top: 0.5rem; display: none;">
+                                            <i class="fa-brands fa-github"></i> Subir a Tabla Global
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Controls (populated dynamically in JS) -->
+                            <div class="printlock-ctrl-panel right"></div>
+                        </div>
+                    </div>
+
+                    <!-- Side Scoreboard for Game -->
+                    <div class="game-score-panel">
+                        <h3>Hacking de Terminal</h3>
+                        <div class="mode-rounds-indicator hidden" id="printlock-rounds-indicator" style="margin-bottom: 1rem;">
+                            <span>Intento:</span>
+                            <strong class="round-badge" id="printlock-round-val">1/3</strong>
+                        </div>
+                        <p class="score-desc" id="printlock-rules-desc">Encuentra los fragmentos que completan la huella. Una de las secciones está bloqueada como guía. Rota las otras franjas hasta alinear las curvas.</p>
+                        <div style="flex-grow: 1;"></div>
+                        <button id="printlock-restart-btn" class="secondary-btn btn-full" style="margin-bottom: 1rem;">
+                            <i class="fa-solid fa-rotate"></i> Reiniciar pirateo
+                        </button>
+                        
+                        <div class="mode-records-panel" style="margin-top: 1rem;">
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-green" style="font-size: 0.55rem;"></i> Fácil:</span>
+                                <strong id="printlock-best-facil-val" class="mode-record-value">-- s</strong>
+                            </div>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-yellow" style="font-size: 0.55rem;"></i> Medio:</span>
+                                <strong id="printlock-best-medio-val" class="mode-record-value">-- s</strong>
+                            </div>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-purple" style="font-size: 0.55rem;"></i> Realista:</span>
+                                <strong id="printlock-best-realista-val" class="mode-record-value">-- s</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game View: PathFind -->
+            <section id="game-pathfind-view" class="view">
+                <div class="game-view-header">
+                    <button id="back-pathfind-to-hub-btn" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al menú</button>
+                </div>
+
+                <div class="pathfind-brand-header">
+                    <div class="pathfind-brand-text">
+                        <span class="brand-title">PATH<span class="brand-accent">FIND</span></span>
+                        <span class="brand-subtitle">Go to the next point closest point.</span>
+                    </div>
+                    
+                    <div class="game-modes pathfind-modes">
+                        <button id="pathfind-mode-facil-btn" class="mode-btn active">Fácil</button>
+                        <button id="pathfind-mode-medio-btn" class="mode-btn">Medio</button>
+                        <button id="pathfind-mode-realista-btn" class="mode-btn">Realista</button>
+                    </div>
+
+                    <div class="pathfind-brand-hexagon">
+                        <i class="fa-solid fa-circle-nodes"></i>
+                    </div>
+                </div>
+
+                <div class="game-layout">
+                    <!-- Main Play Zone (SVG Canvas) -->
+                    <div class="game-play-area">
+                        <div class="pathfind-status-bar">
+                            <span class="status-indicator"><i class="fa-solid fa-shield-halved text-purple"></i> Modo: <strong id="pathfind-mode-label" class="text-purple">Fácil</strong></span>
+                            <span id="pathfind-rounds-indicator" class="status-indicator hidden"><i class="fa-solid fa-layer-group text-green"></i> Ronda: <strong id="pathfind-round-val">1/3</strong></span>
+                            <span class="status-indicator"><i class="fa-solid fa-clock text-cyan"></i> Tiempo: <strong id="pathfind-timer">0.0s</strong></span>
+                        </div>
+                        
+                        <div class="pathfind-canvas-container" id="pathfind-canvas-container">
+                            <svg id="pathfind-svg" viewBox="0 0 500 500" width="100%" height="100%">
+                                <!-- Rendered dynamically in app.js -->
+                            </svg>
+                            <!-- Win Overlay -->
+                            <div id="pathfind-win-overlay" class="win-overlay hidden">
+                                <div class="win-card">
+                                    <i class="fa-solid fa-circle-check win-icon text-green"></i>
+                                    <h3>¡Enlace Completado!</h3>
+                                    <p>Nodos conectados en la secuencia correcta de distancias.</p>
+                                    <button id="pathfind-next-btn" class="primary-btn btn-full">Jugar de Nuevo <i class="fa-solid fa-rotate"></i></button>
+                                    <button id="pathfind-upload-btn" class="secondary-btn btn-full" style="margin-top: 0.5rem; display: none;">
+                                        <i class="fa-brands fa-github"></i> Subir a Tabla Global
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Bottom Progress Bar -->
+                            <div class="pathfind-progress-container">
+                                <div class="pathfind-progress-bar" id="pathfind-progress-bar" style="width: 12.5%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side Scoreboard for Game -->
+                    <div class="game-score-panel">
+                        <h3>Localizador de Rutas</h3>
+                        <p class="score-desc" id="pathfind-rules-desc">Comienza en el nodo morado. Debes hacer clic en el punto más cercano restante. Si te equivocas, la ruta se reiniciará y se penalizarán 2 segundos.</p>
+                        <div style="flex-grow: 1;"></div>
+                        <button id="pathfind-restart-btn" class="secondary-btn btn-full" style="margin-bottom: 1rem;">
+                            <i class="fa-solid fa-rotate"></i> Reiniciar ruta
+                        </button>
+                        
+                        <div class="mode-records-panel">
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-green" style="font-size: 0.55rem;"></i> Fácil:</span>
+                                <strong id="pathfind-best-facil-val" class="mode-record-value">-- s</strong>
+                            </div>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-yellow" style="font-size: 0.55rem;"></i> Medio:</span>
+                                <strong id="pathfind-best-medio-val" class="mode-record-value">-- s</strong>
+                            </div>
+                            <div class="mode-record-row">
+                                <span class="mode-record-label"><i class="fa-solid fa-circle text-purple" style="font-size: 0.55rem;"></i> Realista:</span>
+                                <strong id="pathfind-best-realista-val" class="mode-record-value">-- s</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h3>Cambiar Nombre</h3>
+            <div class="form-group">
+                <label for="edit-name-input">Nombre del Jugador</label>
+                <input type="text" id="edit-name-input" maxlength="15" placeholder="Tu apodo...">
+            </div>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="secondary-btn">Cancelar</button>
+                <button id="modal-save-btn" class="primary-btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Onboarding Modal -->
+    <div id="welcome-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <i class="fa-solid fa-gamepad" style="font-size: 3rem; color: var(--accent-cyan); margin-bottom: 1rem; filter: drop-shadow(0 0 10px var(--accent-cyan-glow));"></i>
+            <h3>¡Bienvenido a ArcadeHub!</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center;">Para poder guardar tus puntuaciones y registrar tus récords globales, por favor ingresa tu nombre de usuario.</p>
+            <div class="form-group">
+                <label for="welcome-name-input">Nombre del Jugador</label>
+                <input type="text" id="welcome-name-input" maxlength="15" placeholder="Tu apodo...">
+            </div>
+            <div class="modal-actions" style="margin-top: 1.5rem;">
+                <button id="welcome-save-btn" class="primary-btn btn-full">Comenzar a Jugar <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="app.js?v=1.0.1"></script>
+</body>
+</html>
