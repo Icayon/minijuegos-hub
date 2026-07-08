@@ -534,32 +534,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function submitScoreToFirebase(gameKey, scoreValue) {
         const player = state.player.name;
-        const entry = {
-            name: player,
-            score: scoreValue,
-            date: new Date().toISOString().split('T')[0]
-        };
+        const listUrl = `${FIREBASE_URL}/leaderboard/${gameKey}.json`;
 
-        const url = `${FIREBASE_URL}/leaderboard/${gameKey}.json`;
+        // Step 1 — fetch existing entries for this game to find player's current best
+        fetch(listUrl)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                let existingKey = null;
+                let existingScore = null;
 
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(entry)
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Firebase write failed');
-            return res.json();
-        })
-        .then(() => {
-            // Refresh global tab immediately after submitting
-            if (state.leaderboard.data) delete state.leaderboard.data[gameKey];
-            fetchLeaderboard(true);
-        })
-        .catch(err => {
-            console.warn('Score upload failed:', err);
-            alert('Error al subir la puntuación. Comprueba tu conexión e inténtalo de nuevo.');
-        });
+                if (data && typeof data === 'object') {
+                    for (const [key, entry] of Object.entries(data)) {
+                        if (entry.name === player) {
+                            if (existingScore === null || entry.score < existingScore) {
+                                existingScore = entry.score;
+                                existingKey = key;
+                            }
+                        }
+                    }
+                }
+
+                // Step 2 — compare scores (lower = better for all games)
+                if (existingScore !== null && scoreValue >= existingScore) {
+                    // Not better — skip upload
+                    const formatted = gameKey === 'reaction'
+                        ? `${Math.round(existingScore)} ms`
+                        : `${existingScore.toFixed(1)} s`;
+                    showToast(`Tu récord anterior (${formatted}) es mejor. No se ha subido.`, 'info');
+                    return;
+                }
+
+                // Step 3 — delete old entry if exists, then upload new one
+                const doUpload = () => {
+                    const entry = {
+                        name: player,
+                        score: scoreValue,
+                        date: new Date().toISOString().split('T')[0]
+                    };
+                    return fetch(listUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(entry)
+                    });
+                };
+
+                const afterDelete = existingKey
+                    ? fetch(`${FIREBASE_URL}/leaderboard/${gameKey}/${existingKey}.json`, { method: 'DELETE' })
+                    : Promise.resolve();
+
+                afterDelete
+                    .then(() => doUpload())
+                    .then(res => {
+                        if (!res.ok) throw new Error('Firebase write failed');
+                        return res.json();
+                    })
+                    .then(() => {
+                        const formatted = gameKey === 'reaction'
+                            ? `${Math.round(scoreValue)} ms`
+                            : `${scoreValue.toFixed(1)} s`;
+                        const msg = existingScore !== null
+                            ? `🏆 ¡Nuevo récord personal! ${formatted} subido al ranking global.`
+                            : `✅ Puntuación (${formatted}) subida al ranking global.`;
+                        showToast(msg, 'success');
+                        // Refresh leaderboard immediately
+                        if (state.leaderboard.data) delete state.leaderboard.data[gameKey];
+                        fetchLeaderboard(true);
+                    })
+                    .catch(err => {
+                        console.warn('Score upload failed:', err);
+                        showToast('Error al subir la puntuación. Comprueba tu conexión.', 'error');
+                    });
+            })
+            .catch(err => {
+                console.warn('Score check failed:', err);
+                showToast('Error de conexión al comprobar el ranking.', 'error');
+            });
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast-notification');
+        toast.textContent = message;
+        toast.className = `toast toast-${type} toast-show`;
+        clearTimeout(toast._hideTimer);
+        toast._hideTimer = setTimeout(() => {
+            toast.classList.remove('toast-show');
+        }, 4000);
     }
 
     // --- Navigation ---

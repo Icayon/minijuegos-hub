@@ -1858,3 +1858,50 @@ body {
     transition: width 0.3s ease;
     width: 0%;
 }
+
+/* ======================================
+   Toast Notification
+====================================== */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    max-width: 360px;
+    padding: 0.9rem 1.3rem;
+    border-radius: var(--border-radius-md);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #fff;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    backdrop-filter: blur(12px);
+    border: 1px solid transparent;
+}
+
+.toast.toast-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.toast-success {
+    background: hsla(145, 70%, 30%, 0.85);
+    border-color: hsla(145, 70%, 50%, 0.35);
+    box-shadow: 0 4px 24px hsla(145, 70%, 40%, 0.25);
+}
+
+.toast.toast-info {
+    background: hsla(220, 60%, 30%, 0.85);
+    border-color: hsla(220, 70%, 60%, 0.3);
+    box-shadow: 0 4px 24px hsla(220, 70%, 40%, 0.2);
+}
+
+.toast.toast-error {
+    background: hsla(0, 65%, 30%, 0.85);
+    border-color: hsla(0, 70%, 55%, 0.35);
+    box-shadow: 0 4px 24px hsla(0, 70%, 40%, 0.25);
+}
