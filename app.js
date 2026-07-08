@@ -493,9 +493,15 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 let entries = [];
                 if (data && typeof data === 'object') {
-                    entries = Object.values(data).filter(e => {
+                    const unique = {};
+                    Object.values(data).filter(e => {
                         return e && e.hash === getChecksum(firebaseKey, e.name, e.score);
-                    }).sort((a, b) => a.score - b.score).slice(0, 10);
+                    }).forEach(e => {
+                        if (!unique[e.name] || e.score < unique[e.name].score) {
+                            unique[e.name] = e;
+                        }
+                    });
+                    entries = Object.values(unique).sort((a, b) => a.score - b.score).slice(0, 10);
                 }
                 if (entries.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" class="lb-empty" style="padding: 0.5rem 0;">¡Sé el primero!</td></tr>';
@@ -631,9 +637,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     let entries = [];
                     if (data && typeof data === 'object') {
-                        entries = Object.values(data).filter(e => {
+                        const unique = {};
+                        Object.values(data).filter(e => {
                             return e && e.hash === getChecksum(cat.key, e.name, e.score);
-                        }).sort((a,b) => a.score - b.score).slice(0, 10);
+                        }).forEach(e => {
+                            if (!unique[e.name] || e.score < unique[e.name].score) {
+                                unique[e.name] = e;
+                            }
+                        });
+                        entries = Object.values(unique).sort((a,b) => a.score - b.score).slice(0, 10);
                     }
 
                     // Process Top 1 point
@@ -719,9 +731,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     let entries = [];
                     if (data && typeof data === 'object') {
-                        entries = Object.values(data).filter(e => {
+                        const unique = {};
+                        Object.values(data).filter(e => {
                             return e && e.hash === getChecksum(cat.key, e.name, e.score);
-                        }).sort((a,b) => a.score - b.score).slice(0, 1);
+                        }).forEach(e => {
+                            if (!unique[e.name] || e.score < unique[e.name].score) {
+                                unique[e.name] = e;
+                            }
+                        });
+                        entries = Object.values(unique).sort((a,b) => a.score - b.score).slice(0, 1);
                     }
                     if (entries.length > 0) {
                         const topPlayer = entries[0].name;
@@ -787,9 +805,15 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 let entries = [];
                 if (data && typeof data === 'object') {
-                    entries = Object.values(data).filter(e => {
+                    const unique = {};
+                    Object.values(data).filter(e => {
                         return e && e.hash === getChecksum(firebaseKey, e.name, e.score);
-                    }).sort((a, b) => a.score - b.score).slice(0, 10);
+                    }).forEach(e => {
+                        if (!unique[e.name] || e.score < unique[e.name].score) {
+                            unique[e.name] = e;
+                        }
+                    });
+                    entries = Object.values(unique).sort((a, b) => a.score - b.score).slice(0, 10);
                 }
                 if (entries.length === 0) {
                     tbodyEl.innerHTML = '<tr><td colspan="3" class="lb-empty">¡Sé el primero en el ranking!</td></tr>';
