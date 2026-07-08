@@ -309,12 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.addEventListener('click', () => switchView(card.dataset.game));
         });
 
-        // Home leaderboard selector
-        document.getElementById('home-lb-selector')?.addEventListener('change', (e) => {
-            if (homeLbInterval) clearInterval(homeLbInterval);
-            loadHomeLb(e.target.value);
-            homeLbInterval = setInterval(() => loadHomeLb(e.target.value), 10000);
-        });
+
 
         setupEventListeners();
         setupUntangleListeners();
@@ -798,48 +793,65 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Home Leaderboard Widget ───────────────────────────────────────────────
     let homeLbInterval = null;
 
-    function loadHomeLb(key) {
+    function loadHomeLb() {
         const tbody  = document.getElementById('home-lb-tbody');
         const status = document.getElementById('home-lb-loading');
         if (!tbody) return;
         if (status) { status.style.display = 'block'; }
-        tbody.innerHTML = '';
 
-        const isReaction = key === 'reaction';
         const playerName = state.player.name;
+        const top1Points = {};
 
-        fetch(`${FIREBASE_URL}/leaderboard/${key}.json`)
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                let entries = [];
-                if (data && typeof data === 'object') {
-                    entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 10);
-                }
+        const promises = LB_CATEGORIES.map(cat => {
+            return fetch(`${FIREBASE_URL}/leaderboard/${cat.key}.json`)
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    let entries = [];
+                    if (data && typeof data === 'object') {
+                        entries = Object.values(data).sort((a,b) => a.score - b.score).slice(0, 1);
+                    }
+                    if (entries.length > 0) {
+                        const topPlayer = entries[0].name;
+                        top1Points[topPlayer] = (top1Points[topPlayer] || 0) + 1;
+                    }
+                });
+        });
+
+        Promise.all(promises)
+            .then(() => {
                 if (status) status.style.display = 'none';
-                if (entries.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem">¡Sé el primero!</td></tr>';
+                
+                const sortedPlayers = Object.entries(top1Points)
+                    .map(([name, pts]) => ({ name, points: pts }))
+                    .sort((a,b) => b.points - a.points);
+
+                if (sortedPlayers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem">Aún sin récords.</td></tr>';
                     return;
                 }
+
                 const medals = ['🥇','🥈','🥉'];
-                tbody.innerHTML = entries.map((e,i) => {
+                tbody.innerHTML = sortedPlayers.map((p, i) => {
                     const pos = i < 3 ? medals[i] : `#${i+1}`;
-                    const sc  = isReaction ? `${Math.round(e.score)} ms` : `${e.score.toFixed(1)} s`;
-                    const mine = e.name === playerName ? 'my-row' : '';
-                    return `<tr class="${mine}"><td>${pos}</td><td>${e.name}</td><td>${sc}</td></tr>`;
+                    const ptsStr = p.points === 1 ? '1 pt' : `${p.points} pts`;
+                    const mine = p.name === playerName ? 'my-row' : '';
+                    return `<tr class="${mine}">
+                        <td>${pos}</td>
+                        <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.name}</td>
+                        <td>${ptsStr}</td>
+                    </tr>`;
                 }).join('');
             })
             .catch(() => {
                 if (status) status.style.display = 'none';
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1rem">Error de conexión</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem">Error de conexión.</td></tr>';
             });
     }
 
     function startHomeLbPolling() {
-        const sel = document.getElementById('home-lb-selector');
-        if (!sel) return;
-        loadHomeLb(sel.value);
+        loadHomeLb();
         if (homeLbInterval) clearInterval(homeLbInterval);
-        homeLbInterval = setInterval(() => loadHomeLb(sel.value), 10000);
+        homeLbInterval = setInterval(() => loadHomeLb(), 10000);
     }
 
     // --- Pre-Game Overlay Logic ---

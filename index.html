@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=1.1.3">
+    <link rel="stylesheet" href="style.css?v=1.1.5">
 </head>
 <body>
     <!-- Background Glows -->
@@ -109,17 +109,11 @@
                 <aside class="home-sidebar">
                     <div class="home-lb-widget">
                         <div class="home-lb-header">
-                            <i class="fa-solid fa-trophy" style="color:var(--accent-yellow)"></i>
-                            <span>Leaderboard Global</span>
+                            <i class="fa-solid fa-crown" style="color:var(--accent-yellow)"></i>
+                            <span>Ranking de Puntos</span>
                         </div>
-                        <select id="home-lb-selector" class="home-lb-select">
-                            <option value="reaction">⚡ Reflejos Rápidos</option>
-                            <option value="untangle_realista">🟣 Desenredar — Realista (Competitivo)</option>
-                            <option value="printlock_realista">🟢 Pirateo — Realista (Competitivo)</option>
-                            <option value="pathfind_realista">🟡 Conector — Realista (Competitivo)</option>
-                        </select>
                         <div class="home-lb-body">
-                            <div id="home-lb-loading" class="lb-status"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</div>
+                            <div id="home-lb-loading" class="lb-status"><i class="fa-solid fa-spinner fa-spin"></i> Calculando...</div>
                             <table class="home-lb-table"><tbody id="home-lb-tbody"></tbody></table>
                         </div>
                         <div class="home-lb-footer"><i class="fa-solid fa-circle-dot" style="color:var(--accent-green);font-size:0.6rem"></i> Actualización cada 10s</div>
@@ -291,10 +285,7 @@
                                  <span id="reaction-best-value" class="best-val">-- ms</span>
                              </div>
                          </div>
-                          <div class="game-side-lb">
-                              <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global</h5>
-                              <table class="pregame-lb-table"><tbody id="reaction-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                          </div>
+                          
                          </div>
                  </div>
              </section>
@@ -392,15 +383,9 @@
                                 <strong id="untangle-best-realista-val" class="mode-record-value">-- s</strong>
                             </div>
                         </div>
-                        <div class="game-side-lb">
-                            <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global (Realista)</h5>
-                            <table class="pregame-lb-table"><tbody id="untangle-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                        </div>
+                        
 
-                        <div class="game-side-lb">
-                            <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global (Realista)</h5>
-                            <table class="pregame-lb-table"><tbody id="untangle-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                        </div>
+                        
                     </div>
                 </div>
             </section>
@@ -510,15 +495,9 @@
                                 <strong id="printlock-best-realista-val" class="mode-record-value">-- s</strong>
                             </div>
                         </div>
-                        <div class="game-side-lb">
-                            <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global (Realista)</h5>
-                            <table class="pregame-lb-table"><tbody id="printlock-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                        </div>
+                        
 
-                        <div class="game-side-lb">
-                            <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global (Realista)</h5>
-                            <table class="pregame-lb-table"><tbody id="printlock-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                        </div>
+                        
                     </div>
                 </div>
             </section>
@@ -622,15 +601,9 @@
                                 <strong id="pathfind-best-realista-val" class="mode-record-value">-- s</strong>
                             </div>
                         </div>
-                        <div class="game-side-lb">
-                            <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global (Realista)</h5>
-                            <table class="pregame-lb-table"><tbody id="pathfind-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                        </div>
+                        
 
-                        <div class="game-side-lb">
-                            <h5><i class="fa-solid fa-trophy text-yellow"></i> Top 10 Global (Realista)</h5>
-                            <table class="pregame-lb-table"><tbody id="pathfind-side-lb"><tr><td class="lb-loading">Cargando...</td></tr></tbody></table>
-                        </div>
+                        
                     </div>
                 </div>
             </section>
@@ -669,6 +642,6 @@
     </div>
 
     <!-- Main JavaScript -->
-    <script src="app.js?v=1.1.3"></script>
+    <script src="app.js?v=1.1.5"></script>
 </body>
 </html>
