@@ -8,11 +8,11 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Oxanium:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style.css?v=1.0.1">
+    <link rel="stylesheet" href="style.css?v=1.0.2">
 </head>
 <body>
     <!-- Background Glows -->
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <!-- Global Stats -->
+        <!-- Global Stats -->
             <div class="stats-section">
                 <div class="stats-tabs">
                     <button class="stats-tab-btn active" id="tab-my-records-btn">Mis Récords</button>
@@ -52,52 +52,85 @@
                 
                 <!-- Personal records panel -->
                 <div id="panel-my-records" class="stats-panel-content">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-label">Partidas Jugadas</span>
-                            <span id="stat-total-games" class="stat-value">0</span>
+                    <!-- Total games -->
+                    <div class="stat-total-row">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <span class="stat-total-label">Partidas jugadas</span>
+                        <span id="stat-total-games" class="stat-total-val">0</span>
+                    </div>
+
+                    <!-- Reflejos -->
+                    <div class="stat-group">
+                        <div class="stat-group-header">
+                            <i class="fa-solid fa-bolt" style="color: var(--accent-cyan)"></i>
+                            <span>Reflejos Rápidos</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Récord Reflejos</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Récord</span>
                             <span id="stat-best-reaction" class="stat-value">-- ms</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Récord Fácil</span>
+                    </div>
+
+                    <!-- Desenredar -->
+                    <div class="stat-group">
+                        <div class="stat-group-header">
+                            <i class="fa-solid fa-circle-nodes" style="color: var(--accent-purple)"></i>
+                            <span>Desenredar Nodos</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Fácil</span>
                             <span id="stat-best-untangle-facil" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Récord Medio</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Medio</span>
                             <span id="stat-best-untangle-medio" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Récord Realista</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Realista</span>
                             <span id="stat-best-untangle-realista" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Scan Fácil</span>
+                    </div>
+
+                    <!-- PrintLock -->
+                    <div class="stat-group">
+                        <div class="stat-group-header">
+                            <i class="fa-solid fa-fingerprint" style="color: var(--accent-green)"></i>
+                            <span>Pirateo de Huella</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Fácil</span>
                             <span id="stat-best-printlock-facil" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Scan Medio</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Medio</span>
                             <span id="stat-best-printlock-medio" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Scan Realista</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Realista</span>
                             <span id="stat-best-printlock-realista" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Camino Fácil</span>
+                    </div>
+
+                    <!-- PathFind -->
+                    <div class="stat-group">
+                        <div class="stat-group-header">
+                            <i class="fa-solid fa-route" style="color: var(--accent-yellow)"></i>
+                            <span>Conector de Puntos</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Fácil</span>
                             <span id="stat-best-pathfind-facil" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Camino Medio</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Medio</span>
                             <span id="stat-best-pathfind-medio" class="stat-value">-- s</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Camino Realista</span>
+                        <div class="stat-row">
+                            <span class="stat-label">Realista</span>
                             <span id="stat-best-pathfind-realista" class="stat-value">-- s</span>
                         </div>
                     </div>
+
                     <button id="reset-stats-btn" class="secondary-btn btn-full">
                         <i class="fa-solid fa-rotate-left"></i> Reiniciar Datos
                     </button>
@@ -574,6 +607,6 @@
     </div>
 
     <!-- Main JavaScript -->
-    <script src="app.js?v=1.0.1"></script>
+    <script src="app.js?v=1.0.2"></script>
 </body>
 </html>

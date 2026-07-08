@@ -40,7 +40,7 @@
 }
 
 body {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-primary);
     min-height: 100vh;
@@ -128,7 +128,7 @@ body {
 }
 
 .brand-title {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -197,7 +197,7 @@ body {
 }
 
 .player-name {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 600;
     font-size: 1.05rem;
 }
@@ -231,7 +231,7 @@ body {
 }
 
 .section-title {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -239,32 +239,91 @@ body {
     font-weight: 700;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+.stats-panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 280px);
+    padding-right: 2px;
 }
 
-.stat-item {
+/* Total games row */
+.stat-total-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: hsla(190, 90%, 50%, 0.06);
+    border: 1px solid hsla(190, 90%, 50%, 0.15);
+    border-radius: var(--border-radius-md);
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+.stat-total-row i {
+    color: var(--accent-cyan);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.stat-total-label {
+    flex-grow: 1;
+    font-size: 0.8rem;
+}
+.stat-total-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+/* Grouped stat blocks per game */
+.stat-group {
     background: hsla(0, 0%, 100%, 0.015);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
-    padding: 1rem;
+    overflow: hidden;
+}
+
+.stat-group-header {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+    background: hsla(0, 0%, 100%, 0.03);
+    border-bottom: 1px solid var(--border-color);
+}
+.stat-group-header i {
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.85rem;
+    border-bottom: 1px solid hsla(0, 0%, 100%, 0.04);
+}
+.stat-row:last-child {
+    border-bottom: none;
 }
 
 .stat-label {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+    font-size: 0.78rem;
+    color: var(--text-muted);
 }
 
 .stat-value {
-    font-family: 'Oxanium', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-cyan);
 }
 
 /* Suggestion Box */
@@ -280,7 +339,7 @@ body {
 }
 
 .suggest-box h4 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.95rem;
     font-weight: 600;
 }
@@ -389,7 +448,7 @@ body {
 }
 
 .main-heading {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 2.75rem;
     font-weight: 800;
     letter-spacing: -1px;
@@ -493,7 +552,7 @@ body {
 }
 
 .game-title {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.35rem;
     font-weight: 700;
 }
@@ -612,7 +671,7 @@ body {
 }
 
 .game-view-header h2 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.8rem;
     display: flex;
     align-items: center;
@@ -665,7 +724,7 @@ body {
 }
 
 .reaction-screen h3 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 2.2rem;
     font-weight: 800;
     line-height: 1.2;
@@ -741,7 +800,7 @@ body {
 }
 
 .game-score-panel h3 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
 }
@@ -774,7 +833,7 @@ body {
 }
 
 .score-badge {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     color: var(--accent-cyan);
 }
@@ -812,7 +871,7 @@ body {
 }
 
 .best-val {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--accent-yellow);
@@ -849,7 +908,7 @@ body {
 }
 
 .modal-card h3 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.3rem;
 }
 
@@ -1161,7 +1220,7 @@ body {
 }
 
 .win-card h3 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.6rem;
     font-weight: 800;
 }
@@ -1231,7 +1290,7 @@ body {
 }
 
 .mode-records-panel h4 {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.85rem;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -1255,7 +1314,7 @@ body {
 }
 
 .mode-record-value {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     color: var(--text-primary);
 }
 
@@ -1294,7 +1353,7 @@ body {
 }
 
 .printlock-brand-text .brand-title {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 2rem;
     font-weight: 800;
     color: var(--text-primary);
@@ -1566,7 +1625,7 @@ body {
     color: var(--text-primary);
     padding: 0.5rem;
     outline: none;
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
@@ -1644,7 +1703,7 @@ body {
 }
 
 .pathfind-brand-text .brand-title {
-    font-family: 'Oxanium', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 2rem;
     font-weight: 800;
     color: var(--text-primary);
